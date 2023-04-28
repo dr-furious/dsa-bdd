@@ -43,6 +43,20 @@ public class MultiMap<T, U> {
         return false;
     }
 
+    public U find (T key, U value) {
+        List<U> inMapValue = map.get(key);
+
+        if (inMapValue == null) {
+            return null;
+        }
+
+        if (inMapValue.contains(value)) {
+            return value;
+        }
+
+        return null;
+    }
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();

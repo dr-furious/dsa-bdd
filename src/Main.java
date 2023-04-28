@@ -20,6 +20,7 @@ public class Main {
         System.out.println(map.put(1, node));
         System.out.println(map.put(1, node2));
         System.out.println(map.put(3, node2));
+        System.out.println(map.put(3, node2));
         System.out.println(map.put(234, node2));
         System.out.println(map.put(234, node));
 
