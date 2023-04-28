@@ -33,10 +33,28 @@ public class BinaryDecisionDiagram {
 
     }
 
-    private String createFunctionFromZeroVar(char var, String[] boolFunction) {
+    private String createFunctionFromZeroVar(char var, String boolFunction) {
+        // Zero branch rules:
+        // a -> 1
+        // A -> 0
+
         StringBuilder newBoolFunction = new StringBuilder();
+        String[] function = boolFunction.split("\\+");
+
+        for (int i = 0; i < function.length; i++) {
+
+        }
 
         return newBoolFunction.toString();
+    }
+
+    public boolean contains(String s, char c) {
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == c) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean evaluate(String boolFunction) {
@@ -49,6 +67,9 @@ public class BinaryDecisionDiagram {
         for (String s : function) {
             int midResult = 1;
             for (int j = 0; j < s.length(); j++) {
+                if (s.charAt(j) == '1') {
+                    return true;
+                }
                 if (s.charAt(j) == lowerCheck) {
                     midResult = 0;
                     break;
@@ -61,6 +82,11 @@ public class BinaryDecisionDiagram {
     }
 
     public boolean isReadyToEval(String boolFunction) {
+        for (int i = 0; i < boolFunction.length(); i++) {
+            if (boolFunction.charAt(i) == '1') {
+                return true;
+            }
+        }
         boolean checkFlag = false;
         for (int i = 0; i < upperCaseAlphabet.length(); i++) {
             for (int j = 0; j < boolFunction.length(); j++) {
@@ -83,7 +109,6 @@ public class BinaryDecisionDiagram {
     }
 
     public String rewriteNegations(String boolFunction) {
-
         for (int i = 0; i < upperCaseAlphabet.length(); i++) {
             boolFunction = boolFunction.replaceAll("!" + upperCaseAlphabet.charAt(i), "" + lowerCaseAlphabet.charAt(i));
         }
