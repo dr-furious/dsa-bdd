@@ -14,6 +14,7 @@ public class Main {
         String[] s2 = {"A","A!D", "ABC","A", "AB!C", "ABC","CD", "A", "A!D"};
         Node node = new Node('A', s);
         Node node2 = new Node('B', s2);
+        BinaryDecisionDiagram bdd = new BinaryDecisionDiagram();
         // System.out.println(Arrays.toString(Utility.removeDuplicates(s)));
 
         MultiMap<Integer, Node> map = new MultiMap<>();
@@ -31,5 +32,8 @@ public class Main {
         System.out.println(map.delete(234, node));
 
         System.out.println(map);
+
+        String s1 = "A!D + A!BC + A + !AB + A!D + !A!B!C + ABC + CD + A + A!D";
+        //System.out.println(bdd.rewriteNegations(s1));
     }
 }
