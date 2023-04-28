@@ -14,32 +14,10 @@ public class BinaryDecisionDiagram {
         root = new Node(order.charAt(0),boolFunction.split("\\+"));
         this.order = order;
 
-
-
-/* BFS Creation
-        int bddHeight = order.length();
-
-        for (int i = 1; i < bddHeight; i++) {
-            createBDDLayer(this.order.charAt(i), i, this.root);
-        }
-*/
-
         return this.root;
     }
 
-    private void createBDDLayer(char controlVar, int layer, Node node) {
-        if (node == null || node.getBoolFunction() == null) {
-            return;
-        }
 
-        if (layer == 1) {
-            node.createZeroChild(controlVar, this.oneNode, this.zeroNode);
-            node.createOneChild(controlVar, this.oneNode, this.zeroNode);
-        } else if (layer > 1) {
-            createBDDLayer(controlVar, layer-1,node.getZeroChild());
-            createBDDLayer(controlVar, layer-1, node.getOneChild());
-        }
-    }
 
     // Prints given level of the tree from specified node
     private void printLevel(Node root, int level) {

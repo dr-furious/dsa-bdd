@@ -55,68 +55,6 @@ public class Node {
     }
 
     // AB+!CD+AC+!B
-    public void createZeroChild(char controlValue,Node oneNode,Node zeroNode) {
-        String newBoolFunction = "";
-        for (String s : this.boolFunction) {
-            if (s.contains("" + this.value)) {
-                if (s.contains("!"+this.value)) {
-                    if (s.length() == 2) {
-                        setZeroChild(oneNode);
-                        return;
-                    }
-                    for (int i = 0; i < s.length(); i++) {
-                        if (s.charAt(i) == '!') {
-                            i++;
-                            continue;
-                        }
-                        newBoolFunction += Character.toString(s.charAt(i));
-                    }
-                    newBoolFunction += "+";
-                }
-                continue;
-            }
-            newBoolFunction += s + "+";
-        }
-
-        if (newBoolFunction.length() == 0) {
-            this.zeroChild = zeroNode;
-            return;
-        }
-        this.zeroChild = new Node(controlValue, Utility.removeDuplicates(newBoolFunction.split("\\+")));
-    }
-
-    public void createOneChild(char controlValue, Node oneNode,Node zeroNode) {
-        String newBoolFunction = "";
-        for (String s : this.boolFunction) {
-            if (s.contains("!" + this.value)) {
-                if (s.length() == 2) {
-                    setOneChild(zeroNode);
-                }
-                continue;
-            }
-            if (s.contains("" + this.value)) {
-                if (s.length() == 1) {
-                    setOneChild(oneNode);
-                    return;
-                }
-                for (int i = 0; i < s.length(); i++) {
-                    if (s.charAt(i) == this.value) {
-                        continue;
-                    }
-                    newBoolFunction += Character.toString(s.charAt(i));
-                }
-                newBoolFunction += "+";
-            } else {
-                newBoolFunction += s + "+";
-            }
-        }
-
-        if (newBoolFunction.length() == 0) {
-            this.oneChild = oneNode;
-            return;
-        }
-        this.oneChild = new Node(controlValue, Utility.removeDuplicates(newBoolFunction.split("\\+")));
-    }
 
     @Override
     public String toString() {
@@ -170,14 +108,5 @@ public class Node {
         int rightHeight = computeHeight(root.getOneChild());
 
         return ((leftHeight > rightHeight) ? leftHeight : rightHeight) + 1;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj.getClass() != Node.class) {
-            return false;
-        }
-
-        return Arrays.equals(((Node) obj).getBoolFunction(), this.boolFunction);
     }
 }
