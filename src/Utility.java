@@ -18,4 +18,21 @@ public class Utility {
 
         return newS;
     }
+
+    public static String removeDuplicates(String s) {
+        ArrayList<Character> list = new ArrayList<>();
+
+        for (int i = 0; i < s.length(); i++) {
+            if (!list.contains(s.charAt(i))) {
+                list.add(s.charAt(i));
+            }
+        }
+
+        StringBuilder newS = new StringBuilder();
+        for (Character character : list) {
+            newS.append(character);
+        }
+
+        return newS.toString();
+    }
 }

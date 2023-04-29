@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+import java.util.List;
 import java.util.zip.ZipError;
 
 public class BinaryDecisionDiagram {
@@ -33,16 +35,43 @@ public class BinaryDecisionDiagram {
 
     }
 
-    private String createFunctionFromZeroVar(char var, String boolFunction) {
+    public String createFunctionFromZeroVar(char var, String boolFunction) {
         // Zero branch rules:
         // a -> 1
         // A -> 0
 
+        ArrayList<String> newBFunction = new ArrayList<>();
+        String[] function = Utility.removeDuplicates(boolFunction.split("\\+"));
+
+        for (String s : function) {
+            s = Utility.removeDuplicates(s);
+            if (!contains(s, var) && !contains(s, Character.toLowerCase(var))) {
+                newBFunction.add(s);
+            } else if (contains(s, Character.toLowerCase(var)) && !contains(s, var)) {
+                if (s.length() == 1) {
+                    newBFunction.add("1");
+                } else {
+                    StringBuilder partialFormula = new StringBuilder();
+                    for (int i = 0; i < s.length(); i++) {
+                        if (s.charAt(i) != Character.toLowerCase(var)) {
+                            partialFormula.append(s.charAt(i));
+                        }
+                    }
+                    newBFunction.add(partialFormula.toString());
+                }
+            }
+        }
+
         StringBuilder newBoolFunction = new StringBuilder();
-        String[] function = boolFunction.split("\\+");
+        for (int i = 0; i < newBFunction.size(); i++) {
+            newBoolFunction.append(newBFunction.get(i));
+            if (i != newBFunction.size()-1) {
+                newBoolFunction.append("+");
+            }
+        }
 
-        for (int i = 0; i < function.length; i++) {
-
+        if (newBoolFunction.toString().isBlank()) {
+            return "0";
         }
 
         return newBoolFunction.toString();
