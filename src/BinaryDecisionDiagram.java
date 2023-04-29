@@ -96,16 +96,16 @@ public class BinaryDecisionDiagram {
         String falseFunction = createFalseBranchFunction(order.charAt(varFromOrder), boolFunction);
         String trueFunction = createTrueBranchFunction(order.charAt(varFromOrder), boolFunction);
 
-        Node zeroBranch = new Node(order.charAt(varFromOrder+1),falseFunction.split("\\+"));
-        Node oneBranch = new Node(order.charAt(varFromOrder+1),trueFunction.split("\\+"));
-
         // ============== I REDUCTION ==============
-        if (zeroBranch.equals(oneBranch)) {
+        if (new StringWrapper(falseFunction).equals(new StringWrapper(trueFunction))) {
             node.setValue(order.charAt(varFromOrder+1));
             node.setBoolFunction(falseFunction.split("\\+"));
             createBDD(parent, node, varFromOrder+1, falseFunction);
             return;
         }
+
+        Node zeroBranch = new Node(order.charAt(varFromOrder+1),falseFunction.split("\\+"));
+        Node oneBranch = new Node(order.charAt(varFromOrder+1),trueFunction.split("\\+"));
 
         map.put(node.hash(), node);
 
@@ -143,6 +143,8 @@ public class BinaryDecisionDiagram {
             }
         }
 
+        newBFunction = Utility.removeDuplicates(newBFunction);
+
         StringBuilder newBoolFunction = new StringBuilder();
         for (int i = 0; i < newBFunction.size(); i++) {
             newBoolFunction.append(newBFunction.get(i));
@@ -164,7 +166,7 @@ public class BinaryDecisionDiagram {
         // A -> 0
 
         ArrayList<String> newBFunction = new ArrayList<>();
-        String[] function = boolFunction.split("\\+");
+        String[] function = Utility.removeDuplicates(boolFunction.split("\\+"));
 
         for (String s : function) {
             s = Utility.removeDuplicates(s);
@@ -184,6 +186,8 @@ public class BinaryDecisionDiagram {
                 }
             }
         }
+
+        newBFunction = Utility.removeDuplicates(newBFunction);
 
         StringBuilder newBoolFunction = new StringBuilder();
         for (int i = 0; i < newBFunction.size(); i++) {

@@ -1,6 +1,7 @@
 import jdk.jshell.execution.Util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Utility {
 
@@ -10,10 +11,22 @@ public class Utility {
 
         for (String value : s) {
             stringWrapper = new StringWrapper(value);
-            System.out.println(map.put(Utility.hash(stringWrapper.toString()), stringWrapper));
+            map.put(Utility.hash(stringWrapper.toString()), stringWrapper);
         }
 
         return map.toStringArray();
+    }
+
+    public static ArrayList<String> removeDuplicates(ArrayList<String> s) {
+        MultiMap<Integer, StringWrapper> map = new MultiMap<>();
+        StringWrapper stringWrapper;
+
+        for (String value : s) {
+            stringWrapper = new StringWrapper(value);
+            map.put(Utility.hash(stringWrapper.toString()), stringWrapper);
+        }
+
+        return map.toArrayList();
     }
 
     public static String removeDuplicates(String s) {

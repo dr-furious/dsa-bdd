@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Tester {
@@ -44,7 +45,7 @@ public class Tester {
         //bdd.createBDD(s4, "ABCD");
         bdd.createBDD(s5, "ABCDEF");
         stop = System.nanoTime();
-        //bdd.printNicely(true);
+        bdd.printNicely(false);
         System.out.println("Number of nodes before reduction: " + bdd.getAllNodes());
         System.out.println("Number of nodes after reduction: " + bdd.countNodes());
         System.out.println("Reduction ratio: " + bdd.calculateReductionRatio() + "%");
@@ -54,5 +55,25 @@ public class Tester {
         String two = "Ab+A+AAB+ABC+BCA+F+F+F+F+F+AB";
         System.out.println(Arrays.toString(Utility.removeDuplicates(one.split("\\+"))));
         System.out.println(Arrays.toString(Utility.removeDuplicates(two.split("\\+"))));
+
+        ArrayList<String> oneL = new ArrayList<>();
+        oneL.add("eF");
+        oneL.add("Fe");
+        oneL.add("F");
+        oneL.add("F");
+        ArrayList<String> twoL = new ArrayList<>();
+        twoL.add("Ab");
+        twoL.add("A");
+        twoL.add("AAB");
+        twoL.add("ABC");
+        twoL.add("BCA");
+        twoL.add("F");
+        twoL.add("F");
+        twoL.add("F");
+        twoL.add("F");
+        twoL.add("F");
+        twoL.add("AB");
+        System.out.println(Utility.removeDuplicates(oneL));
+        System.out.println(Utility.removeDuplicates(twoL));
     }
 }

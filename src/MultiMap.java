@@ -97,6 +97,18 @@ public class MultiMap<T, U> {
         return s;
     }
 
+    public ArrayList<String > toArrayList() {
+        ArrayList<String> s = new ArrayList<>();
+
+        for (T key : map.keySet()) {
+            List<U> list = map.get(key);
+            for (U value : list) {
+                s.add(value.toString());
+            }
+        }
+        return s;
+    }
+
     public int getSize() {
         return size;
     }
