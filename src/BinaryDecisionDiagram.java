@@ -341,7 +341,7 @@ public class BinaryDecisionDiagram {
                 } else {
                     String aa;
                     if (memPrint) {
-                        aa = String.valueOf(n.hashCode());
+                        aa = "<" + n.getValue() + "> " + n.hashCode();
                     } else {
                         aa = "<" + n.getValue() + "> " + Arrays.toString(n.getBoolFunction()) + " (" + n.hashCode() + ")";
                     }
