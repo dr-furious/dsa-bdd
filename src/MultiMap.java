@@ -83,6 +83,20 @@ public class MultiMap<T, U> {
         return s.toString();
     }
 
+    public String[] toStringArray() {
+        String[] s = new String[size];
+        int index = 0;
+
+        for (T key : map.keySet()) {
+            List<U> list = map.get(key);
+            for (U value : list) {
+                s[index] = value.toString();
+                index++;
+            }
+        }
+        return s;
+    }
+
     public int getSize() {
         return size;
     }

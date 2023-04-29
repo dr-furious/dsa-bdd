@@ -1,22 +1,19 @@
+import jdk.jshell.execution.Util;
+
 import java.util.ArrayList;
 
 public class Utility {
 
     public static String[] removeDuplicates(String[] s) {
-        ArrayList<String> list = new ArrayList<>();
+        MultiMap<Integer, StringWrapper> map = new MultiMap<>();
+        StringWrapper stringWrapper;
 
         for (String value : s) {
-            if (!list.contains(value)) {
-                list.add(value);
-            }
+            stringWrapper = new StringWrapper(value);
+            System.out.println(map.put(Utility.hash(stringWrapper.toString()), stringWrapper));
         }
 
-        String[] newS = new String[list.size()];
-        for (int i = 0; i < list.size(); i++) {
-            newS[i] = list.get(i);
-        }
-
-        return newS;
+        return map.toStringArray();
     }
 
     public static String removeDuplicates(String s) {
@@ -55,6 +52,14 @@ public class Utility {
         return hash;
     }
 
+    public static int hash(String boolFunction) {
+        int hash = 0;
+        for (int j = 0; j < boolFunction.length(); j++) {
+            hash += boolFunction.charAt(j);
+        }
+
+        return hash;
+    }
     public static long hash2(String[] boolFunction) {
         int hash = 0;
         for (String s : boolFunction) {
@@ -63,6 +68,15 @@ public class Utility {
                 midHash *= s.charAt(j);
             }
             hash += midHash % s.length();
+        }
+
+        return hash;
+    }
+
+    public static long hash2(String boolFunction) {
+        int hash = 1;
+        for (int j = 0; j < boolFunction.length(); j++) {
+            hash *= boolFunction.charAt(j);
         }
 
         return hash;
