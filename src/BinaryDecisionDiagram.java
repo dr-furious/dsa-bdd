@@ -1,6 +1,4 @@
 import java.util.ArrayList;
-import java.util.List;
-import java.util.zip.ZipError;
 
 public class BinaryDecisionDiagram {
     private static final String upperCaseAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -31,12 +29,52 @@ public class BinaryDecisionDiagram {
     private void createBDD(Node node, int varFromOrder, String boolFunction, String order) {
         // If bool function contains only one var,
         // determine the value of the node's children and return
-
-
     }
 
-    public String createFunctionFromZeroVar(char var, String boolFunction) {
-        // Zero branch rules:
+    public String createTrueBranchFunction(char var, String boolFunction) {
+        // True branch rules:
+        // a -> 0
+        // A -> 1
+
+        ArrayList<String> newBFunction = new ArrayList<>();
+        String[] function = Utility.removeDuplicates(boolFunction.split("\\+"));
+
+        for (String s : function) {
+            s = Utility.removeDuplicates(s);
+            if (!contains(s, var) && !contains(s, Character.toLowerCase(var))) {
+                newBFunction.add(s);
+            } else if (!contains(s, Character.toLowerCase(var)) && contains(s, var)) {
+                if (s.length() == 1) {
+                    newBFunction.add("1");
+                } else {
+                    StringBuilder partialFormula = new StringBuilder();
+                    for (int i = 0; i < s.length(); i++) {
+                        if (s.charAt(i) != var) {
+                            partialFormula.append(s.charAt(i));
+                        }
+                    }
+                    newBFunction.add(partialFormula.toString());
+                }
+            }
+        }
+
+        StringBuilder newBoolFunction = new StringBuilder();
+        for (int i = 0; i < newBFunction.size(); i++) {
+            newBoolFunction.append(newBFunction.get(i));
+            if (i != newBFunction.size()-1) {
+                newBoolFunction.append("+");
+            }
+        }
+
+        if (newBoolFunction.toString().isBlank()) {
+            return "0";
+        }
+
+        return newBoolFunction.toString();
+    }
+
+    public String createFalseBranchFunction(char var, String boolFunction) {
+        // False branch rules:
         // a -> 1
         // A -> 0
 
