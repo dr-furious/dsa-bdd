@@ -11,11 +11,14 @@ public class BinaryDecisionDiagram {
 
     private MultiMap<Integer, Node> map;
 
-    private final Node zeroNode = new Node('0');
-    private final Node oneNode = new Node('1');
+    private final Node zeroNode;
+    private final Node oneNode;
 
     public BinaryDecisionDiagram() {
         map = new MultiMap<>();
+        zeroNode = new Node('0');
+        oneNode = new Node('1');
+        numberOfNodes = 3;
     }
 
     public Node createBDD(String boolFunction, String order) {
@@ -23,12 +26,48 @@ public class BinaryDecisionDiagram {
         root = new Node(order.charAt(0),boolFunction.split("\\+"));
         this.order = order;
 
+        createBDD(root, 0,boolFunction);
+
         return this.root;
     }
 
-    private void createBDD(Node node, int varFromOrder, String boolFunction, String order) {
+    private void createBDD(Node node, int varFromOrder, String boolFunction) {
         // If bool function contains only one var,
         // determine the value of the node's children and return
+
+        if (isReadyToEval(boolFunction)) {
+            // False branch
+            if (evaluate(boolFunction, false)) {
+                // decision = 1
+                node.setZeroChild(oneNode);
+            } else {
+                // decision = 0
+                node.setZeroChild(zeroNode);
+            }
+
+            // True branch
+            if (evaluate(boolFunction, true)) {
+                // decision = 1
+                node.setOneChild(oneNode);
+            } else {
+                // decision = 0
+                node.setOneChild(zeroNode);
+            }
+
+            return;
+        }
+
+        String falseFunction = createFalseBranchFunction(order.charAt(varFromOrder), boolFunction);
+        String trueFunction = createTrueBranchFunction(order.charAt(varFromOrder), boolFunction);
+
+        Node zeroBranch = new Node(order.charAt(varFromOrder+1),falseFunction.split("\\+"));
+        Node oneBranch = new Node(order.charAt(varFromOrder+1),trueFunction.split("\\+"));
+
+        node.setZeroChild(zeroBranch);
+        node.setOneChild(oneBranch);
+
+        createBDD(zeroBranch, varFromOrder+1, falseFunction);
+        createBDD(oneBranch, varFromOrder+1, trueFunction);
     }
 
     public String createTrueBranchFunction(char var, String boolFunction) {
@@ -124,9 +163,12 @@ public class BinaryDecisionDiagram {
         return false;
     }
 
-    public boolean evaluate(String boolFunction) {
+    public boolean evaluate(String boolFunction, boolean substituteForVar) {
         char check = boolFunction.charAt(0);
-        char lowerCheck = Character.toLowerCase(check);
+        if (check == '0') {
+            return false;
+        }
+        char lowerCheck = (substituteForVar) ? Character.toLowerCase(check) : Character.toUpperCase(check);
 
         String[] function = boolFunction.split("\\+");
         int result = 0;
@@ -149,6 +191,9 @@ public class BinaryDecisionDiagram {
     }
 
     public boolean isReadyToEval(String boolFunction) {
+        if (boolFunction.charAt(0) == '0') {
+            return true;
+        }
         for (int i = 0; i < boolFunction.length(); i++) {
             if (boolFunction.charAt(i) == '1') {
                 return true;
@@ -190,7 +235,8 @@ public class BinaryDecisionDiagram {
         }
 
         if (level == 1) {
-            System.out.println(root);
+            System.out.print(root);
+            System.out.print(" ");
         } else if (level > 1) {
             printLevel(root.getZeroChild(), level-1);
             printLevel(root.getOneChild(), level-1);
@@ -211,11 +257,36 @@ public class BinaryDecisionDiagram {
         int treeHeight = this.root.computeHeight();
 
         for (int i = 1; i < treeHeight+1; i++) {
-            System.out.print("Level " + (i-1) + ": ");
+            if (i == treeHeight) {
+                System.out.print("Level Results: ");
+            } else {
+                System.out.print("Level " + order.charAt(i-1) + ": ");
+            }
             printLevel(root, i);
             System.out.println();
         }
     }
 
+    public double calculateReductionRatio() {
+        double allNodes = Math.pow(2, order.length()+1)-1;
+        return 100-(this.reductionRatio = numberOfNodes / allNodes);
+    }
 
+    public int countNodes() {
+        countNodes(root);
+
+        // +2 To count in the 0 and 1 children
+        return this.numberOfNodes+2;
+    }
+
+    private void countNodes(Node node){
+        if (node == zeroNode || node == oneNode) {
+            return;
+        }
+
+        numberOfNodes++;
+
+        countNodes(node.getZeroChild());
+        countNodes(node.getOneChild());
+    }
 }
