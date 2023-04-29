@@ -4,6 +4,7 @@ import java.util.List;
 
 public class MultiMap<T, U> {
     private HashMap<T, List<U>> map;
+    private int size;
 
     public MultiMap() {
         map = new HashMap<>();
@@ -16,6 +17,7 @@ public class MultiMap<T, U> {
             List<U> list = new ArrayList<>();
             list.add(value);
             map.put(key, list);
+            size++;
             return true;
         }
 
@@ -23,6 +25,7 @@ public class MultiMap<T, U> {
             return false;
         } else {
             inMapValue.add(value);
+            size++;
         }
 
         return true;
@@ -37,6 +40,7 @@ public class MultiMap<T, U> {
 
         if (inMapValue.contains(value)) {
             inMapValue.remove(value);
+            size--;
             return true;
         }
 
@@ -50,8 +54,10 @@ public class MultiMap<T, U> {
             return null;
         }
 
-        if (inMapValue.contains(value)) {
-            return value;
+        for (U u : inMapValue) {
+            if (u.equals(value)) {
+                return u;
+            }
         }
 
         return null;
@@ -75,5 +81,9 @@ public class MultiMap<T, U> {
             s.append("NULL\n");
         }
         return s.toString();
+    }
+
+    public int getSize() {
+        return size;
     }
 }

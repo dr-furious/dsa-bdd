@@ -54,7 +54,13 @@ public class Node {
         this.oneChild = oneChild;
     }
 
-    // AB+!CD+AC+!B
+    public int hash() {
+        return Utility.hash(this.boolFunction) + value*value;
+    }
+
+    public long hash2() {
+        return Utility.hash2(this.boolFunction) + (long) value *value;
+    }
 
     @Override
     public String toString() {
@@ -62,7 +68,7 @@ public class Node {
                 this.oneChild != null && (this.oneChild.getValue() == '1' || this.oneChild.getValue() == '0')) {
             return "{" +
                     "V:" + this.value + "|" +
-                    "F:" + Arrays.toString(this.boolFunction) + "|" +
+                    "Ref:'" + this.hashCode() + "'|" +
                     "0:" + this.zeroChild.getValue() + "|" +
                     "1:" + this.oneChild.getValue() +
                     "}"
@@ -71,7 +77,7 @@ public class Node {
         if (this.zeroChild != null && (this.zeroChild.getValue() == '0' || this.zeroChild.getValue() == '1')) {
             return "{" +
                     "V:" + this.value + "|" +
-                    "F:" + Arrays.toString(this.boolFunction) + "|" +
+                    "Ref:'" + this.hashCode() + "'|" +
                     "0:" + this.zeroChild.getValue() + "|" +
                     "1:" + ((this.oneChild == null) ? "null" : Arrays.toString(this.oneChild.getBoolFunction())) +
                     "}"
@@ -80,7 +86,7 @@ public class Node {
         if (this.oneChild != null && (this.oneChild.getValue() == '1' || this.oneChild.getValue() == '0')) {
             return "{" +
                     "V:" + this.value + "|" +
-                    "F:" + Arrays.toString(this.boolFunction) + "|" +
+                    "Ref:'" + this.hashCode() + "'|" +
                     "0:" + ((this.zeroChild == null) ? "null" : Arrays.toString(this.zeroChild.getBoolFunction())) + "|" +
                     "1:" + this.oneChild.getValue() +
                     "}"
@@ -88,12 +94,60 @@ public class Node {
         }
         return "{" +
                 "V:" + this.value + "|" +
-                "F:" + Arrays.toString(this.boolFunction) + "|" +
+                "Ref:'" + this.hashCode() + "'|" +
                 "0:" + ((this.zeroChild == null) ? "null" : Arrays.toString(this.zeroChild.getBoolFunction())) + "|" +
                 "1:" + ((this.oneChild == null) ? "null" : Arrays.toString(this.oneChild.getBoolFunction())) +
                 "}"
         ;
     }
+
+    public String toStringFull() {
+        if (this.zeroChild != null && (this.zeroChild.getValue() == '0' || this.zeroChild.getValue() == '1') &&
+                this.oneChild != null && (this.oneChild.getValue() == '1' || this.oneChild.getValue() == '0')) {
+            return "{" +
+                    "V:" + this.value + "|" +
+                    "F:" + Arrays.toString(this.boolFunction) + "|" +
+                    "0:" + this.zeroChild.getValue() + "|" +
+                    "1:" + this.oneChild.getValue() +
+                    "}"
+                    ;
+        }
+        if (this.zeroChild != null && (this.zeroChild.getValue() == '0' || this.zeroChild.getValue() == '1')) {
+            return "{" +
+                    "V:" + this.value + "|" +
+                    "F:" + Arrays.toString(this.boolFunction) + "|" +
+                    "0:" + this.zeroChild.getValue() + "|" +
+                    "1:" + ((this.oneChild == null) ? "null" : Arrays.toString(this.oneChild.getBoolFunction())) +
+                    "}"
+                    ;
+        }
+        if (this.oneChild != null && (this.oneChild.getValue() == '1' || this.oneChild.getValue() == '0')) {
+            return "{" +
+                    "V:" + this.value + "|" +
+                    "F:" + Arrays.toString(this.boolFunction) + "|" +
+                    "0:" + ((this.zeroChild == null) ? "null" : Arrays.toString(this.zeroChild.getBoolFunction())) + "|" +
+                    "1:" + this.oneChild.getValue() +
+                    "}"
+                    ;
+        }
+        return "{" +
+                "V:" + this.value + "|" +
+                "F:" + Arrays.toString(this.boolFunction) + "|" +
+                "0:" + ((this.zeroChild == null) ? "null" : Arrays.toString(this.zeroChild.getBoolFunction())) + "|" +
+                "1:" + ((this.oneChild == null) ? "null" : Arrays.toString(this.oneChild.getBoolFunction())) +
+                "}"
+                ;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null || obj.getClass() != Node.class) {
+            return false;
+        }
+
+        Node node = (Node) obj;
+        return node.hash() == this.hash() && node.hash2() == this.hash2();
+     }
 
     public int computeHeight() {
         return computeHeight(this);
@@ -109,4 +163,5 @@ public class Node {
 
         return ((leftHeight > rightHeight) ? leftHeight : rightHeight) + 1;
     }
+
 }

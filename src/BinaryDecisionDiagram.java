@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class BinaryDecisionDiagram {
     private static final String upperCaseAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -18,7 +20,7 @@ public class BinaryDecisionDiagram {
         map = new MultiMap<>();
         zeroNode = new Node('0');
         oneNode = new Node('1');
-        numberOfNodes = 3;
+        numberOfNodes = 0;
     }
 
     public Node createBDD(String boolFunction, String order) {
@@ -26,15 +28,48 @@ public class BinaryDecisionDiagram {
         root = new Node(order.charAt(0),boolFunction.split("\\+"));
         this.order = order;
 
-        createBDD(root, 0,boolFunction);
+        createBDD(null, root, 0,boolFunction);
 
         return this.root;
     }
 
-    private void createBDD(Node node, int varFromOrder, String boolFunction) {
-        // If bool function contains only one var,
-        // determine the value of the node's children and return
+    private void createBDD(Node parent, Node node, int varFromOrder, String boolFunction) {
+        if (Utility.contains(boolFunction, '1')) {
+            if (parent == null) {
+                this.root = oneNode;
+                return;
+            }
+            if (parent.getZeroChild() == node) {
+                parent.setZeroChild(oneNode);
+            } else if (parent.getOneChild() == node) {
+                parent.setOneChild(oneNode);
+            }
+            return;
+        } else if (Utility.contains(boolFunction,'0')) {
+            if (parent == null) {
+                this.root = zeroNode;
+                return;
+            }
+            if (parent.getZeroChild() == node) {
+                parent.setZeroChild(zeroNode);
+            } else if (parent.getOneChild() == node) {
+                parent.setOneChild(zeroNode);
+            }
+            return;
+        }
 
+        // ============== S REDUCTION ==============
+        Node exisitingNode = map.find(node.hash(), node);
+        if ((node.equals(exisitingNode))) {
+            if (parent.getZeroChild() == node) {
+                parent.setZeroChild(exisitingNode);
+            } else if (parent.getOneChild() == node) {
+                parent.setOneChild(exisitingNode);
+            }
+            return;
+        }
+
+        // Check if boolean function is ready to be evaluated
         if (isReadyToEval(boolFunction)) {
             // False branch
             if (evaluate(boolFunction, false)) {
@@ -54,6 +89,7 @@ public class BinaryDecisionDiagram {
                 node.setOneChild(zeroNode);
             }
 
+            map.put(node.hash(), node);
             return;
         }
 
@@ -63,11 +99,21 @@ public class BinaryDecisionDiagram {
         Node zeroBranch = new Node(order.charAt(varFromOrder+1),falseFunction.split("\\+"));
         Node oneBranch = new Node(order.charAt(varFromOrder+1),trueFunction.split("\\+"));
 
+        // ============== I REDUCTION ==============
+        if (zeroBranch.equals(oneBranch)) {
+            node.setValue(order.charAt(varFromOrder+1));
+            node.setBoolFunction(falseFunction.split("\\+"));
+            createBDD(parent, node, varFromOrder+1, falseFunction);
+            return;
+        }
+
+        map.put(node.hash(), node);
+
         node.setZeroChild(zeroBranch);
         node.setOneChild(oneBranch);
 
-        createBDD(zeroBranch, varFromOrder+1, falseFunction);
-        createBDD(oneBranch, varFromOrder+1, trueFunction);
+        createBDD(node, zeroBranch, varFromOrder+1, falseFunction);
+        createBDD(node, oneBranch, varFromOrder+1, trueFunction);
     }
 
     public String createTrueBranchFunction(char var, String boolFunction) {
@@ -76,13 +122,13 @@ public class BinaryDecisionDiagram {
         // A -> 1
 
         ArrayList<String> newBFunction = new ArrayList<>();
-        String[] function = Utility.removeDuplicates(boolFunction.split("\\+"));
+        String[] function = boolFunction.split("\\+");
 
         for (String s : function) {
             s = Utility.removeDuplicates(s);
-            if (!contains(s, var) && !contains(s, Character.toLowerCase(var))) {
+            if (!Utility.contains(s, var) && !Utility.contains(s, Character.toLowerCase(var))) {
                 newBFunction.add(s);
-            } else if (!contains(s, Character.toLowerCase(var)) && contains(s, var)) {
+            } else if (!Utility.contains(s, Character.toLowerCase(var)) && Utility.contains(s, var)) {
                 if (s.length() == 1) {
                     newBFunction.add("1");
                 } else {
@@ -118,13 +164,13 @@ public class BinaryDecisionDiagram {
         // A -> 0
 
         ArrayList<String> newBFunction = new ArrayList<>();
-        String[] function = Utility.removeDuplicates(boolFunction.split("\\+"));
+        String[] function = boolFunction.split("\\+");
 
         for (String s : function) {
             s = Utility.removeDuplicates(s);
-            if (!contains(s, var) && !contains(s, Character.toLowerCase(var))) {
+            if (!Utility.contains(s, var) && !Utility.contains(s, Character.toLowerCase(var))) {
                 newBFunction.add(s);
-            } else if (contains(s, Character.toLowerCase(var)) && !contains(s, var)) {
+            } else if (Utility.contains(s, Character.toLowerCase(var)) && !Utility.contains(s, var)) {
                 if (s.length() == 1) {
                     newBFunction.add("1");
                 } else {
@@ -152,15 +198,6 @@ public class BinaryDecisionDiagram {
         }
 
         return newBoolFunction.toString();
-    }
-
-    public boolean contains(String s, char c) {
-        for (int i = 0; i < s.length(); i++) {
-            if (s.charAt(i) == c) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public boolean evaluate(String boolFunction, boolean substituteForVar) {
@@ -262,31 +299,129 @@ public class BinaryDecisionDiagram {
             } else {
                 System.out.print("Level " + order.charAt(i-1) + ": ");
             }
-            printLevel(root, i);
+            printLevel(i);
             System.out.println();
         }
     }
 
+    public double getAllNodes() {
+        return Math.pow(2, order.length()+1)-1;
+    }
+
     public double calculateReductionRatio() {
-        double allNodes = Math.pow(2, order.length()+1)-1;
-        return 100-(this.reductionRatio = numberOfNodes / allNodes);
+        return this.reductionRatio = 100*(1-numberOfNodes / getAllNodes());
     }
 
     public int countNodes() {
-        countNodes(root);
-
-        // +2 To count in the 0 and 1 children
-        return this.numberOfNodes+2;
+        return (numberOfNodes = map.getSize() + 2);
     }
 
-    private void countNodes(Node node){
-        if (node == zeroNode || node == oneNode) {
-            return;
+    public void printNicely(boolean memPrint) {
+        printNicely(root, memPrint);
+    }
+
+    private void printNicely(Node root, boolean memPrint) {
+        List<List<String>> lines = new ArrayList<>();
+        List<Node> level = new ArrayList<>();
+        List<Node> next = new ArrayList<>();
+
+        level.add(root);
+        int nn = 1;
+        int widest = 0;
+
+        while (nn != 0) {
+            List<String> line = new ArrayList<>();
+            nn = 0;
+
+            for (Node n : level) {
+                if (n == null) {
+                    line.add(null);
+                    next.add(null);
+                    next.add(null);
+                } else {
+                    String aa;
+                    if (memPrint) {
+                        aa = String.valueOf(n.hashCode());
+                    } else {
+                        aa = "<" + n.getValue() + "> " + Arrays.toString(n.getBoolFunction()) + " (" + n.hashCode() + ")";
+                    }
+                    line.add(aa);
+                    if (aa.length() > widest) widest = aa.length();
+
+                    next.add(n.getZeroChild());
+                    next.add(n.getOneChild());
+
+                    if (n.getZeroChild() != null) nn++;
+                    if (n.getOneChild() != null) nn++;
+                }
+            }
+
+            if (widest % 2 == 1) widest++;
+
+            lines.add(line);
+
+            List<Node> tmp = level;
+            level = next;
+            next = tmp;
+            next.clear();
         }
 
-        numberOfNodes++;
+        int perpiece = lines.get(lines.size() - 1).size() * (widest + 4);
+        for (int i = 0; i < lines.size(); i++) {
+            List<String> line = lines.get(i);
+            int hpw = (int) Math.floor(perpiece / 2f) - 1;
 
-        countNodes(node.getZeroChild());
-        countNodes(node.getOneChild());
+            if (i > 0) {
+                for (int j = 0; j < line.size(); j++) {
+                    // split node
+                    char c = ' ';
+                    if (j % 2 == 1) {
+                        if (line.get(j - 1) != null) {
+                            c = (line.get(j) != null) ? '┴' : '┘';
+                        } else {
+                            if (line.get(j) != null) c = '└';
+                        }
+                    }
+                    System.out.print(c);
+
+                    // lines and spaces
+                    if (line.get(j) == null) {
+                        for (int k = 0; k < perpiece - 1; k++) {
+                            System.out.print(" ");
+                        }
+                    } else {
+
+                        for (int k = 0; k < hpw; k++) {
+                            System.out.print(j % 2 == 0 ? " " : "─");
+                        }
+                        System.out.print(j % 2 == 0 ? "┌" : "┐");
+                        for (int k = 0; k < hpw; k++) {
+                            System.out.print(j % 2 == 0 ? "─" : " ");
+                        }
+                    }
+                }
+                System.out.println();
+            }
+
+            // print line of nodes
+            for (int j = 0; j < line.size(); j++) {
+                String f = line.get(j);
+                if (f == null) f = "";
+                int gap1 = (int) Math.ceil(perpiece / 2f - f.length() / 2f);
+                int gap2 = (int) Math.floor(perpiece / 2f - f.length() / 2f);
+
+                for (int k = 0; k < gap1; k++) {
+                    System.out.print(" ");
+                }
+                System.out.print(f);
+                for (int k = 0; k < gap2; k++) {
+                    System.out.print(" ");
+                }
+            }
+            System.out.println();
+
+            perpiece /= 2;
+        }
     }
+
 }

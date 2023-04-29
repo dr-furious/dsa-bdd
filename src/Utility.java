@@ -35,4 +35,36 @@ public class Utility {
 
         return newS.toString();
     }
+
+    public static boolean contains(String s, char c) {
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == c) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public static int hash(String[] boolFunction) {
+        int hash = 0;
+        for (String s : boolFunction) {
+            for (int j = 0; j < s.length(); j++) {
+                hash += s.charAt(j);
+            }
+        }
+
+        return hash;
+    }
+
+    public static long hash2(String[] boolFunction) {
+        int hash = 0;
+        for (String s : boolFunction) {
+            int midHash = 1;
+            for (int j = 0; j < s.length(); j++) {
+                midHash *= s.charAt(j);
+            }
+            hash += midHash % s.length();
+        }
+
+        return hash;
+    }
 }
