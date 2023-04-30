@@ -23,6 +23,14 @@ public class BinaryDecisionDiagram {
         numberOfNodes = 0;
     }
 
+    public int getNumberOfNodes() {
+        return numberOfNodes;
+    }
+
+    public double getReductionRatio() {
+        return reductionRatio;
+    }
+
     public Node createBDD(String boolFunction, String order) {
         boolFunction = rewriteNegations(boolFunction);
         root = new Node(order.charAt(0),boolFunction.split("\\+"));
@@ -30,6 +38,8 @@ public class BinaryDecisionDiagram {
 
         createBDD(null, root, 0,boolFunction);
 
+        countNodes();
+        calculateReductionRatio();
         return this.root;
     }
 

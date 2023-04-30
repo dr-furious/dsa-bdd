@@ -55,11 +55,11 @@ public class Node {
     }
 
     public int hash() {
-        return Utility.hash(this.boolFunction) + value*value;
+        return Utility.hash(this.boolFunction);
     }
 
     public long hash2() {
-        return Utility.hash2(this.boolFunction) + (long) value *value;
+        return Utility.hash2(this.boolFunction);
     }
 
     @Override

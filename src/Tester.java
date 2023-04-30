@@ -13,8 +13,10 @@ public class Tester {
         String s2 = "ABCA+AB!DA+D!DA+!BA+BA!C+BC!A!B+C+A+!B+CD+A+A";
         String s2_1 = "AB!DA+D!DA+!BA+ABCA+BA!C+BC!A!B+C+A+CD+A+A+!B";
         String s3 = "AB+AC+BC";
+        String s3_2 = "AB+C";
         String s4 = "A!D+A!BC+A+!AB+A!D+!A!B!C+ABC+CD+A+A!D";
-        String s5 = "ABC!D!E!F+!ABC+!EFAB!C+FB!ECCA+BF+CAF+BF!E!A";
+        String s5 = "ABC!D!EF+!ABC+!EFAB!C+FB!ECCA+BF+CAF+BF!E!A";
+        String s6 = "ABC!D!E!F+!ABC+!EFAB!C+FB!ECCA+BF+CAF+BF!E!A";
 
         /*
         System.out.println(bdd.isReadyToEval(s1 = bdd.rewriteNegations(s1)));
@@ -42,38 +44,17 @@ public class Tester {
         //bdd.createBDD(s1_2, "ABCDEFGHIJKLMNOPQRST");
         //bdd.createBDD(s2, "ABCD");
         //bdd.createBDD(s3, "ABC");
+        //bdd.createBDD(s3_2, "ABC");
         //bdd.createBDD(s4, "ABCD");
         bdd.createBDD(s5, "ABCDEF");
+        //bdd.createBDD(s6, "ABCDEF");
         stop = System.nanoTime();
+
         bdd.printNicely(false);
+
         System.out.println("Number of nodes before reduction: " + bdd.getAllNodes());
-        System.out.println("Number of nodes after reduction: " + bdd.countNodes());
-        System.out.println("Reduction ratio: " + bdd.calculateReductionRatio() + "%");
+        System.out.println("Number of nodes after reduction: " + bdd.getNumberOfNodes());
+        System.out.println("Reduction ratio: " + bdd.getReductionRatio() + "%");
         System.out.println("Reduction duration: " + (stop-start) + " nanoseconds = " + ((stop-start)/1_000_000) + " milliseconds = " + ((stop-start)/1_000_000_000) + " seconds");
-
-        String one = "eF+Fe+F+F";
-        String two = "Ab+A+AAB+ABC+BCA+F+F+F+F+F+AB";
-        System.out.println(Arrays.toString(Utility.removeDuplicates(one.split("\\+"))));
-        System.out.println(Arrays.toString(Utility.removeDuplicates(two.split("\\+"))));
-
-        ArrayList<String> oneL = new ArrayList<>();
-        oneL.add("eF");
-        oneL.add("Fe");
-        oneL.add("F");
-        oneL.add("F");
-        ArrayList<String> twoL = new ArrayList<>();
-        twoL.add("Ab");
-        twoL.add("A");
-        twoL.add("AAB");
-        twoL.add("ABC");
-        twoL.add("BCA");
-        twoL.add("F");
-        twoL.add("F");
-        twoL.add("F");
-        twoL.add("F");
-        twoL.add("F");
-        twoL.add("AB");
-        System.out.println(Utility.removeDuplicates(oneL));
-        System.out.println(Utility.removeDuplicates(twoL));
     }
 }
