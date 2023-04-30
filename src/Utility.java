@@ -2,8 +2,50 @@ import jdk.jshell.execution.Util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 
 public class Utility {
+
+    public static String shift(String s) {
+        return s.substring(s.length()-1) + s.substring(0,s.length()-1);
+    }
+
+    public static String shuffle(String s) {
+        ArrayList<Character> list = new ArrayList<>();
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i<s.length(); i++) {
+            list.add(s.charAt(i));
+        }
+
+        Collections.shuffle(list);
+
+        for (char c : list) {
+            sb.append(c);
+        }
+        return sb.toString();
+    }
+
+    public static String extractUniqueLetters(String s) {
+        s = s.toUpperCase();
+        StringBuilder sb = new StringBuilder();
+        ArrayList<Character> list = new ArrayList<>();
+
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (!list.contains(c) && (c >= 'A' && c <= 'Z')) {
+                list.add(c);
+            }
+        }
+
+        Collections.sort(list);
+        for (Character character : list) {
+            sb.append(character);
+        }
+
+        return sb.toString();
+    }
 
     public static String[] removeDuplicates(String[] s) {
         MultiMap<Integer, StringWrapper> map = new MultiMap<>();

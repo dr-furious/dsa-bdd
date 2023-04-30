@@ -31,6 +31,30 @@ public class BinaryDecisionDiagram {
         return reductionRatio;
     }
 
+    public static BinaryDecisionDiagram createBDDWithBestOrder(String boolFunction) {
+        String order = Utility.extractUniqueLetters(boolFunction);
+
+        BinaryDecisionDiagram bestOrderBDD;
+        BinaryDecisionDiagram currentBDD = new BinaryDecisionDiagram();
+
+        currentBDD.createBDD(boolFunction, order);
+        bestOrderBDD = currentBDD;
+
+        System.out.println("Number of nodes: " + currentBDD.countNodes());
+        for (int i = 0; i < order.length()-1; i++) {
+            order = Utility.shuffle(order);
+            currentBDD = new BinaryDecisionDiagram();
+            currentBDD.createBDD(boolFunction, order);
+            System.out.println("Number of nodes: " + currentBDD.countNodes());
+
+            if (bestOrderBDD.countNodes() > currentBDD.countNodes()) {
+                bestOrderBDD = currentBDD;
+            }
+        }
+
+        return bestOrderBDD;
+    }
+
     public Node createBDD(String boolFunction, String order) {
         boolFunction = rewriteNegations(boolFunction);
         root = new Node(order.charAt(0),boolFunction.split("\\+"));
@@ -44,7 +68,7 @@ public class BinaryDecisionDiagram {
             countNodes();
         }
         calculateReductionRatio();
-        return this.root;
+        return root;
     }
 
     private void createBDD(Node parent, Node node, int varFromOrder, String boolFunction) {
@@ -135,7 +159,7 @@ public class BinaryDecisionDiagram {
         createBDD(node, oneBranch, varFromOrder+1, trueFunction);
     }
 
-    public String createTrueBranchFunction(char var, String boolFunction) {
+    private String createTrueBranchFunction(char var, String boolFunction) {
         // True branch rules:
         // a -> 0
         // A -> 1
@@ -179,7 +203,7 @@ public class BinaryDecisionDiagram {
         return newBoolFunction.toString();
     }
 
-    public String createFalseBranchFunction(char var, String boolFunction) {
+    private String createFalseBranchFunction(char var, String boolFunction) {
         // False branch rules:
         // a -> 1
         // A -> 0
@@ -223,7 +247,7 @@ public class BinaryDecisionDiagram {
         return newBoolFunction.toString();
     }
 
-    public boolean evaluate(String boolFunction, boolean substituteForVar) {
+    private boolean evaluate(String boolFunction, boolean substituteForVar) {
         char check = boolFunction.charAt(0);
         if (check == '0') {
             return false;
@@ -250,7 +274,7 @@ public class BinaryDecisionDiagram {
         return result > 0;
     }
 
-    public boolean isReadyToEval(String boolFunction) {
+    private boolean isReadyToEval(String boolFunction) {
         if (boolFunction.charAt(0) == '0') {
             return true;
         }
@@ -280,7 +304,7 @@ public class BinaryDecisionDiagram {
         return false;
     }
 
-    public String rewriteNegations(String boolFunction) {
+    private String rewriteNegations(String boolFunction) {
         for (int i = 0; i < upperCaseAlphabet.length(); i++) {
             boolFunction = boolFunction.replaceAll("!" + upperCaseAlphabet.charAt(i), "" + lowerCaseAlphabet.charAt(i));
         }
@@ -304,8 +328,20 @@ public class BinaryDecisionDiagram {
     }
 
     // Prints given level of the tree from the root
-    public void printLevel(int level) {
+    private void printLevel(int level) {
         printLevel(this.root, level);
+    }
+
+    public double getAllNodes() {
+        return Math.pow(2, order.length()+1)-1;
+    }
+
+    private double calculateReductionRatio() {
+        return this.reductionRatio = 100*(1-numberOfNodes / getAllNodes());
+    }
+
+    private int countNodes() {
+        return (numberOfNodes = map.getSize() + 2);
     }
 
     // Prints the tree
@@ -325,18 +361,6 @@ public class BinaryDecisionDiagram {
             printLevel(i);
             System.out.println();
         }
-    }
-
-    public double getAllNodes() {
-        return Math.pow(2, order.length()+1)-1;
-    }
-
-    public double calculateReductionRatio() {
-        return this.reductionRatio = 100*(1-numberOfNodes / getAllNodes());
-    }
-
-    public int countNodes() {
-        return (numberOfNodes = map.getSize() + 2);
     }
 
     public void printNicely(boolean memPrint) {
