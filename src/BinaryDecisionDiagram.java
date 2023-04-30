@@ -81,6 +81,11 @@ public class BinaryDecisionDiagram {
 
         // Check if boolean function is ready to be evaluated
         if (isReadyToEval(boolFunction)) {
+            char c = Character.toUpperCase(boolFunction.charAt(0));
+            if (Utility.contains(upperCaseAlphabet, c) && node.getValue() != c) {
+                node.setValue(c);
+            }
+            System.out.println(boolFunction + " was ready to be evaluated: " + node.hashCode());
             // False branch
             if (evaluate(boolFunction, false)) {
                 // decision = 1
