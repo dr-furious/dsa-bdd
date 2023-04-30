@@ -17,6 +17,7 @@ public class Tester {
         String s4 = "A!D+A!BC+A+!AB+A!D+!A!B!C+ABC+CD+A+A!D";
         String s5 = "ABC!D!EF+!ABC+!EFAB!C+FB!ECCA+BF+CAF+BF!E!A";
         String s6 = "ABC!D!E!F+!ABC+!EFAB!C+FB!ECCA+BF+CAF+BF!E!A";
+        String s7 = "AB+AC+C";
 
         /*
         System.out.println(bdd.isReadyToEval(s1 = bdd.rewriteNegations(s1)));
@@ -46,8 +47,9 @@ public class Tester {
         //bdd.createBDD(s3, "ABC");
         //bdd.createBDD(s3_2, "ABC");
         //bdd.createBDD(s4, "ABCD");
-        bdd.createBDD(s5, "ABCDEF");
+        //bdd.createBDD(s5, "ABCDEF");
         //bdd.createBDD(s6, "ABCDEF");
+        bdd.createBDD(s7, "CBA");
         stop = System.nanoTime();
 
         bdd.printNicely(false);
@@ -55,6 +57,6 @@ public class Tester {
         System.out.println("Number of nodes before reduction: " + bdd.getAllNodes());
         System.out.println("Number of nodes after reduction: " + bdd.getNumberOfNodes());
         System.out.println("Reduction ratio: " + bdd.getReductionRatio() + "%");
-        System.out.println("Reduction duration: " + (stop-start) + " nanoseconds = " + ((stop-start)/1_000_000) + " milliseconds = " + ((stop-start)/1_000_000_000) + " seconds");
+        System.out.println("Reduction duration: " + (stop-start) + " nanoseconds = " + ((stop-start)/1_000_000.0) + " milliseconds = " + ((stop-start)/1_000_000_000.0) + " seconds");
     }
 }

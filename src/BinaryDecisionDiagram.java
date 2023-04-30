@@ -38,7 +38,11 @@ public class BinaryDecisionDiagram {
 
         createBDD(null, root, 0,boolFunction);
 
-        countNodes();
+        if (root == oneNode || root == zeroNode) {
+            numberOfNodes = 1;
+        } else {
+            countNodes();
+        }
         calculateReductionRatio();
         return this.root;
     }
@@ -85,7 +89,7 @@ public class BinaryDecisionDiagram {
             if (Utility.contains(upperCaseAlphabet, c) && node.getValue() != c) {
                 node.setValue(c);
             }
-            System.out.println(boolFunction + " was ready to be evaluated: " + node.hashCode());
+
             // False branch
             if (evaluate(boolFunction, false)) {
                 // decision = 1
