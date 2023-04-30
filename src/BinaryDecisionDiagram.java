@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 public class BinaryDecisionDiagram {
@@ -29,6 +30,27 @@ public class BinaryDecisionDiagram {
 
     public double getReductionRatio() {
         return reductionRatio;
+    }
+
+    public char useBDD(String inputs) throws BDDNotInitializedException {
+        if (root == null) {
+            throw new BDDNotInitializedException("BDD was not Initialized");
+        }
+        HashMap<Character, Integer> booleanMap = new HashMap<>();
+        for (int i = 0; i < inputs.length(); i++) {
+            booleanMap.put(upperCaseAlphabet.charAt(i), Integer.parseInt(Character.toString(inputs.charAt(i))));
+        }
+
+        Node root = this.root;
+        while (root != oneNode && root != zeroNode) {
+            if (booleanMap.get(root.getValue()) == 0) {
+                root = root.getZeroChild();
+            } else if (booleanMap.get(root.getValue()) == 1) {
+                root = root.getOneChild();
+            }
+        }
+
+        return root.getValue();
     }
 
     public static BinaryDecisionDiagram createBDDWithBestOrder(String boolFunction) {
