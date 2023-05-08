@@ -75,7 +75,6 @@ public class BinaryDecisionDiagram {
         currentBDD.createBDD(boolFunction, order);
         bestOrderBDD = currentBDD;
 
-        //System.out.println("Number of nodes: " + currentBDD.countNodes());
         for (long i = 0; i < Math.pow(order.length()-1,1)+1; i++) {
             order = Utility.shuffle(order);
             currentBDD = new BinaryDecisionDiagram();
@@ -176,8 +175,6 @@ public class BinaryDecisionDiagram {
         // ============== I REDUCTION ==============
 
         if (zeroBranch.equals(oneBranch)) {
-            //System.out.print(Arrays.toString(zeroBranch.getBoolFunction()) + " | ");
-            //System.out.println(Arrays.toString(oneBranch.getBoolFunction()));
             node.setValue(order.charAt(varFromOrder+1));
             node.setBoolFunction(falseFunction.split("\\+"));
             createBDD(parent, node, varFromOrder+1, falseFunction);
@@ -200,11 +197,9 @@ public class BinaryDecisionDiagram {
         // A -> 1
 
         ArrayList<String> newBFunction = new ArrayList<>();
-        //String[] function = Utility.removeDuplicates(boolFunction.split("\\+"));
         String[] function = boolFunction.split("\\+");
 
         for (String s : function) {
-            //s = Utility.removeDuplicates(s);
             if (!Utility.contains(s, var) && !Utility.contains(s, Character.toLowerCase(var))) {
                 newBFunction.add(s);
             } else if (!Utility.contains(s, Character.toLowerCase(var)) && Utility.contains(s, var)) {
@@ -222,8 +217,6 @@ public class BinaryDecisionDiagram {
             }
         }
 
-        //newBFunction = Utility.removeDuplicates(newBFunction);
-
         StringBuilder newBoolFunction = new StringBuilder();
         for (int i = 0; i < newBFunction.size(); i++) {
             newBoolFunction.append(newBFunction.get(i));
@@ -235,7 +228,6 @@ public class BinaryDecisionDiagram {
         if (newBoolFunction.toString().isBlank()) {
             return "0";
         }
-
         return newBoolFunction.toString();
     }
 
@@ -245,11 +237,9 @@ public class BinaryDecisionDiagram {
         // A -> 0
 
         ArrayList<String> newBFunction = new ArrayList<>();
-        //String[] function = Utility.removeDuplicates(boolFunction.split("\\+"));
         String[] function = boolFunction.split("\\+");
 
         for (String s : function) {
-            //s = Utility.removeDuplicates(s);
             if (!Utility.contains(s, var) && !Utility.contains(s, Character.toLowerCase(var))) {
                 newBFunction.add(s);
             } else if (Utility.contains(s, Character.toLowerCase(var)) && !Utility.contains(s, var)) {
@@ -266,8 +256,6 @@ public class BinaryDecisionDiagram {
                 }
             }
         }
-
-        //newBFunction = Utility.removeDuplicates(newBFunction);
 
         StringBuilder newBoolFunction = new StringBuilder();
         for (int i = 0; i < newBFunction.size(); i++) {

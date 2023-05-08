@@ -117,10 +117,10 @@ public class Tester {
 
         return finalAlphabet;
     }
-    public void test(String boolFunction, String inputs, boolean print) throws BDDNotInitializedException {
-        test(boolFunction, Utility.extractUniqueLetters(boolFunction), inputs, print);
+    public void testBB(String boolFunction, String inputs, boolean print) throws BDDNotInitializedException {
+        testBDD(boolFunction, Utility.extractUniqueLetters(boolFunction), inputs, print);
     }
-    public void test(String boolFunction, String order,String inputs, boolean print) throws BDDNotInitializedException {
+    public void testBDD(String boolFunction, String order,String inputs, boolean print) throws BDDNotInitializedException {
         BinaryDecisionDiagram bdd = new BinaryDecisionDiagram();
         BinaryDecisionDiagram bestOrderBDD;
         long start;
