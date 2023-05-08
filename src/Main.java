@@ -6,8 +6,8 @@ public class Main {
 
 
         BinaryDecisionDiagram testBDD = new BinaryDecisionDiagram();
-        tester.testBDD("ABCD+!ABCD", "ABCD", "0000", true);
+        //tester.testBDD("ABCD+!ABCD", "ABCD", "0000", true);
 
-        //tester.testBDD(13, false,1);
+        tester.testBDD(13, false,100);
     }
 }
