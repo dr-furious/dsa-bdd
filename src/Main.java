@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 public class Main {
     public static void main(String[] args) throws BDDNotInitializedException {
         Tester tester = new Tester();
@@ -35,6 +37,13 @@ public class Main {
         System.out.println(Utility.hash(arr2));
         System.out.println(Utility.hash2(arr2));*/
 
-        tester.testBDD(13, false,100);
+        tester.testBDD(20, false,1);
+
+        //System.out.println((13*100)*Math.pow(2,12));
+        String[] s = {"Abc", "AbC", "aBc"};
+        String[] s2 = {"ABc", "AbC", "aBC"};
+        System.out.println(Arrays.hashCode(s));
+        System.out.println(Arrays.hashCode(s2));
+        System.out.println(Utility.sortBinaryFunction("ABCDEF+aBCD+abcD+AbCD+AAB+C+D+D"));
     }
 }

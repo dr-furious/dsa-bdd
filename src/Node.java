@@ -55,19 +55,23 @@ public class Node {
     }
 
     public int hash() {
-        return Utility.hash(this.boolFunction) + this.value;
+        return Utility.hash(this.boolFunction) * this.value * this.value;
     }
 
     public long hash2() {
-        return Utility.hash2(this.boolFunction) + this.value;
+        return Utility.hash2(this.boolFunction) * this.value * this.value;
     }
 
     public long hash3() {
-        return Utility.hash3(this.boolFunction) + this.value;
+        return Utility.hash3(this.boolFunction) * this.value * this.value;
     }
 
     public long hash4() {
-        return Utility.hash4(this.boolFunction) + this.value;
+        return Utility.hash4(this.boolFunction) * this.value * this.value;
+    }
+
+    public long hashSpecial() {
+        return Arrays.toString(this.boolFunction).hashCode();
     }
 
     @Override
@@ -154,11 +158,12 @@ public class Node {
         }
 
         Node node = (Node) obj;
-        return node.getValue() == this.value &&
+        /*return node.getValue() == this.value &&
                 node.hash() == this.hash() &&
                 node.hash2() == this.hash2() &&
                 node.hash3() == this.hash3() &&
-                node.hash4() == this.hash4();
+                node.hash4() == this.hash4();*/
+        return node.hashSpecial() == this.hashSpecial();
      }
 
     public int computeHeight() {

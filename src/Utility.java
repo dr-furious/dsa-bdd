@@ -1,9 +1,6 @@
 import jdk.jshell.execution.Util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.*;
 
 public class Utility {
 
@@ -54,45 +51,26 @@ public class Utility {
         return sb.toString();
     }
 
-    public static String[] removeDuplicates(String[] s) {
-        MultiMap<Integer, StringWrapper> map = new MultiMap<>();
-        StringWrapper stringWrapper;
-
-        for (String value : s) {
-            stringWrapper = new StringWrapper(value);
-            map.put(Utility.hash(stringWrapper.toString()), stringWrapper);
+    public static String sortBinaryFunction(String binaryFunction) {
+        String[] parts = binaryFunction.split("\\+");
+        StringBuilder sortedBinaryFunction = new StringBuilder();
+        for (String part : parts) {
+            char[] chars = part.toCharArray();
+            Arrays.sort(chars);
+            String sortedPart = new String(chars).replaceAll("(.)\\1+", "$1");
+            sortedBinaryFunction.append(sortedPart);
+            sortedBinaryFunction.append("+");
         }
+        sortedBinaryFunction.deleteCharAt(sortedBinaryFunction.length() - 1);
 
-        return map.toStringArray();
-    }
+        Set<String> oneOfAKind = new HashSet<>(Arrays.asList(sortedBinaryFunction.toString().split("\\+")));
+        ArrayList<String> oneOfAKindList = new ArrayList<>(oneOfAKind);
+        Collections.sort(oneOfAKindList);
 
-    public static ArrayList<String> removeDuplicates(ArrayList<String> s) {
-        MultiMap<Integer, StringWrapper> map = new MultiMap<>();
-        StringWrapper stringWrapper;
-
-        for (String value : s) {
-            stringWrapper = new StringWrapper(value);
-            map.put(Utility.hash(stringWrapper.toString()), stringWrapper);
-        }
-
-        return map.toArrayList();
-    }
-
-    public static String removeDuplicates(String s) {
-        ArrayList<Character> list = new ArrayList<>();
-
-        for (int i = 0; i < s.length(); i++) {
-            if (!list.contains(s.charAt(i))) {
-                list.add(s.charAt(i));
-            }
-        }
-
-        StringBuilder newS = new StringBuilder();
-        for (Character character : list) {
-            newS.append(character);
-        }
-
-        return newS.toString();
+        return oneOfAKindList.toString()
+                .replaceAll(", ", "+")
+                .replace("[", "")
+                .replace("]", "");
     }
 
     public static boolean contains(String s, char c) {
@@ -175,13 +153,6 @@ public class Utility {
 
         return hash;
     }
-    public static int factorial(int n) {
-        int result = 1;
-        for (int i = 2; i <= n; i++) {
-            result *= i;
-        }
 
-        return result;
-    }
 
 }

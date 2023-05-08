@@ -12,13 +12,13 @@ public class BinaryDecisionDiagram {
     private String order;
     private double reductionRatio;
 
-    private MultiMap<Integer, Node> map;
+    private HashMap<Long, Node> map;
 
     private final Node NODE_ZERO;
     private final Node NODE_ONE;
 
     public BinaryDecisionDiagram() {
-        map = new MultiMap<>();
+        map = new HashMap<>();
         NODE_ZERO = new Node('0');
         NODE_ONE = new Node('1');
         numberOfNodes = 0;
@@ -76,7 +76,7 @@ public class BinaryDecisionDiagram {
         bestOrderBDD = currentBDD;
 
         //System.out.println("Number of nodes: " + currentBDD.countNodes());
-        for (long i = 0; i < order.length()-1; i++) {
+        for (long i = 0; i < Math.pow(order.length()-1,1)+1; i++) {
             order = Utility.shuffle(order);
             currentBDD = new BinaryDecisionDiagram();
             currentBDD.createBDD(boolFunction, order);
@@ -91,16 +91,13 @@ public class BinaryDecisionDiagram {
 
     public Node createBDD(String boolFunction, String order) {
         boolFunction = rewriteNegations(boolFunction);
+        boolFunction = Utility.sortBinaryFunction(boolFunction);
         root = new Node(order.charAt(0),boolFunction.split("\\+"));
         this.order = order;
 
         createBDD(null, root, 0,boolFunction);
 
-        if (root == NODE_ONE || root == NODE_ZERO) {
-            numberOfNodes = 1;
-        } else {
-            countNodes();
-        }
+        countNodes();
         calculateReductionRatio();
         return root;
     }
@@ -131,7 +128,7 @@ public class BinaryDecisionDiagram {
         }
 
         // ============== S REDUCTION ==============
-        Node exisitingNode = map.find(node.hash(), node);
+        Node exisitingNode = map.get(node.hashSpecial());
         if ((node.equals(exisitingNode))) {
             if (parent.getZeroChild() == node) {
                 parent.setZeroChild(exisitingNode);
@@ -166,25 +163,29 @@ public class BinaryDecisionDiagram {
                 node.setOneChild(NODE_ZERO);
             }
 
-            map.put(node.hash(), node);
+            map.put(node.hashSpecial(), node);
             return;
         }
 
-        String falseFunction = createFalseBranchFunction(order.charAt(varFromOrder), boolFunction);
-        String trueFunction = createTrueBranchFunction(order.charAt(varFromOrder), boolFunction);
+        String falseFunction = Utility.sortBinaryFunction(createFalseBranchFunction(order.charAt(varFromOrder), boolFunction));
+        String trueFunction = Utility.sortBinaryFunction(createTrueBranchFunction(order.charAt(varFromOrder), boolFunction));
+
+        Node zeroBranch = new Node(order.charAt(varFromOrder+1),falseFunction.split("\\+"));
+        Node oneBranch = new Node(order.charAt(varFromOrder+1),trueFunction.split("\\+"));
 
         // ============== I REDUCTION ==============
-        if (new StringWrapper(falseFunction).equals(new StringWrapper(trueFunction))) {
+
+        if (zeroBranch.equals(oneBranch)) {
+            //System.out.print(Arrays.toString(zeroBranch.getBoolFunction()) + " | ");
+            //System.out.println(Arrays.toString(oneBranch.getBoolFunction()));
             node.setValue(order.charAt(varFromOrder+1));
             node.setBoolFunction(falseFunction.split("\\+"));
             createBDD(parent, node, varFromOrder+1, falseFunction);
             return;
         }
 
-        Node zeroBranch = new Node(order.charAt(varFromOrder+1),falseFunction.split("\\+"));
-        Node oneBranch = new Node(order.charAt(varFromOrder+1),trueFunction.split("\\+"));
 
-        map.put(node.hash(), node);
+        map.put(node.hashSpecial(), node);
 
         node.setZeroChild(zeroBranch);
         node.setOneChild(oneBranch);
@@ -199,10 +200,11 @@ public class BinaryDecisionDiagram {
         // A -> 1
 
         ArrayList<String> newBFunction = new ArrayList<>();
-        String[] function = Utility.removeDuplicates(boolFunction.split("\\+"));
+        //String[] function = Utility.removeDuplicates(boolFunction.split("\\+"));
+        String[] function = boolFunction.split("\\+");
 
         for (String s : function) {
-            s = Utility.removeDuplicates(s);
+            //s = Utility.removeDuplicates(s);
             if (!Utility.contains(s, var) && !Utility.contains(s, Character.toLowerCase(var))) {
                 newBFunction.add(s);
             } else if (!Utility.contains(s, Character.toLowerCase(var)) && Utility.contains(s, var)) {
@@ -220,7 +222,7 @@ public class BinaryDecisionDiagram {
             }
         }
 
-        newBFunction = Utility.removeDuplicates(newBFunction);
+        //newBFunction = Utility.removeDuplicates(newBFunction);
 
         StringBuilder newBoolFunction = new StringBuilder();
         for (int i = 0; i < newBFunction.size(); i++) {
@@ -243,10 +245,11 @@ public class BinaryDecisionDiagram {
         // A -> 0
 
         ArrayList<String> newBFunction = new ArrayList<>();
-        String[] function = Utility.removeDuplicates(boolFunction.split("\\+"));
+        //String[] function = Utility.removeDuplicates(boolFunction.split("\\+"));
+        String[] function = boolFunction.split("\\+");
 
         for (String s : function) {
-            s = Utility.removeDuplicates(s);
+            //s = Utility.removeDuplicates(s);
             if (!Utility.contains(s, var) && !Utility.contains(s, Character.toLowerCase(var))) {
                 newBFunction.add(s);
             } else if (Utility.contains(s, Character.toLowerCase(var)) && !Utility.contains(s, var)) {
@@ -264,7 +267,7 @@ public class BinaryDecisionDiagram {
             }
         }
 
-        newBFunction = Utility.removeDuplicates(newBFunction);
+        //newBFunction = Utility.removeDuplicates(newBFunction);
 
         StringBuilder newBoolFunction = new StringBuilder();
         for (int i = 0; i < newBFunction.size(); i++) {
@@ -376,7 +379,7 @@ public class BinaryDecisionDiagram {
 
     // Nodes 0 and 1 are not counted in since they are constants
     private int countNodes() {
-        return (numberOfNodes = map.getSize());
+        return (numberOfNodes = map.size());
     }
 
     // Prints the tree
