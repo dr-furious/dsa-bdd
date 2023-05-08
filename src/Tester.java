@@ -61,7 +61,7 @@ public class Tester {
 
         return (operator == 1) ? 0 : 1;
     }
-    public void generateRandomBoolFunction(int alphabetLength) {
+    private void generateRandomBoolFunction(int alphabetLength) {
         ArrayList<String> alphabet = generateAlphabet(alphabetLength);
         Collections.sort(alphabet);
 
