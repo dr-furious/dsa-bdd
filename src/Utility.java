@@ -7,6 +7,13 @@ import java.util.Collections;
 
 public class Utility {
 
+    public static int generateInt(int min, int max) {
+        if (min > max) {
+            throw new IllegalArgumentException("Argument \"min\" must be lower than argument \"max\".");
+        }
+
+        return (int) (Math.random()*(max-min)+min);
+    }
     public static String shift(String s) {
         return s.substring(s.length()-1) + s.substring(0,s.length()-1);
     }
@@ -96,6 +103,14 @@ public class Utility {
         }
         return false;
     }
+    public static boolean contains(String[] s, char c) {
+        for (String value : s) {
+            if (value.equals(Character.toString(c))) {
+                return true;
+            }
+        }
+        return false;
+    }
     public static int hash(String[] boolFunction) {
         int hash = 0;
         for (String s : boolFunction) {
@@ -106,7 +121,6 @@ public class Utility {
 
         return hash;
     }
-
     public static int hash(String boolFunction) {
         int hash = 0;
         for (int j = 0; j < boolFunction.length(); j++) {
@@ -116,9 +130,22 @@ public class Utility {
         return hash;
     }
     public static long hash2(String[] boolFunction) {
-        int hash = 0;
+        long hash = 0;
         for (String s : boolFunction) {
-            int midHash = 1;
+            long midHash = 1;
+            for (int j = 0; j < s.length(); j++) {
+                midHash *= s.charAt(j);
+            }
+            hash += midHash;
+        }
+
+        return hash;
+    }
+
+    public static long hash3(String[] boolFunction) {
+        long hash = 0;
+        for (String s : boolFunction) {
+            long midHash = 1;
             for (int j = 0; j < s.length(); j++) {
                 midHash *= s.charAt(j);
             }
@@ -128,12 +155,33 @@ public class Utility {
         return hash;
     }
 
+    public static long hash4(String[] boolFunction) {
+        long hash = 0;
+        for (String s : boolFunction) {
+            long midHash = 1;
+            for (int j = 0; j < s.length(); j++) {
+                midHash *= s.charAt(j);
+            }
+            hash += midHash + boolFunction.length/midHash;
+        }
+
+        return hash%boolFunction.length;
+    }
     public static long hash2(String boolFunction) {
-        int hash = 1;
+        long hash = 1;
         for (int j = 0; j < boolFunction.length(); j++) {
             hash *= boolFunction.charAt(j);
         }
 
         return hash;
     }
+    public static int factorial(int n) {
+        int result = 1;
+        for (int i = 2; i <= n; i++) {
+            result *= i;
+        }
+
+        return result;
+    }
+
 }

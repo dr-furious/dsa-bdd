@@ -14,13 +14,13 @@ public class BinaryDecisionDiagram {
 
     private MultiMap<Integer, Node> map;
 
-    private final Node zeroNode;
-    private final Node oneNode;
+    private final Node NODE_ZERO;
+    private final Node NODE_ONE;
 
     public BinaryDecisionDiagram() {
         map = new MultiMap<>();
-        zeroNode = new Node('0');
-        oneNode = new Node('1');
+        NODE_ZERO = new Node('0');
+        NODE_ONE = new Node('1');
         numberOfNodes = 0;
     }
 
@@ -32,17 +32,30 @@ public class BinaryDecisionDiagram {
         return reductionRatio;
     }
 
+    public String getOrder() {
+        return order;
+    }
+
+    public Node getRoot() {
+        return root;
+    }
+
     public char useBDD(String inputs) throws BDDNotInitializedException {
         if (root == null) {
-            throw new BDDNotInitializedException("BDD was not Initialized");
+            throw new BDDNotInitializedException("BDD was not initialized.");
+        }
+        String alphabet = Utility.extractUniqueLetters(order);
+        if (alphabet.length() != inputs.length()) {
+            throw new IllegalArgumentException("Argument \"inputs\" should be the same length as number " +
+                    "of unique variables in the argument \"boolFunction\".");
         }
         HashMap<Character, Integer> booleanMap = new HashMap<>();
         for (int i = 0; i < inputs.length(); i++) {
-            booleanMap.put(upperCaseAlphabet.charAt(i), Integer.parseInt(Character.toString(inputs.charAt(i))));
+            booleanMap.put(alphabet.charAt(i), Integer.parseInt(Character.toString(inputs.charAt(i))));
         }
 
         Node root = this.root;
-        while (root != oneNode && root != zeroNode) {
+        while (root != NODE_ONE && root != NODE_ZERO) {
             if (booleanMap.get(root.getValue()) == 0) {
                 root = root.getZeroChild();
             } else if (booleanMap.get(root.getValue()) == 1) {
@@ -62,12 +75,11 @@ public class BinaryDecisionDiagram {
         currentBDD.createBDD(boolFunction, order);
         bestOrderBDD = currentBDD;
 
-        System.out.println("Number of nodes: " + currentBDD.countNodes());
-        for (int i = 0; i < order.length()-1; i++) {
+        //System.out.println("Number of nodes: " + currentBDD.countNodes());
+        for (long i = 0; i < order.length()-1; i++) {
             order = Utility.shuffle(order);
             currentBDD = new BinaryDecisionDiagram();
             currentBDD.createBDD(boolFunction, order);
-            System.out.println("Number of nodes: " + currentBDD.countNodes());
 
             if (bestOrderBDD.countNodes() > currentBDD.countNodes()) {
                 bestOrderBDD = currentBDD;
@@ -84,7 +96,7 @@ public class BinaryDecisionDiagram {
 
         createBDD(null, root, 0,boolFunction);
 
-        if (root == oneNode || root == zeroNode) {
+        if (root == NODE_ONE || root == NODE_ZERO) {
             numberOfNodes = 1;
         } else {
             countNodes();
@@ -96,24 +108,24 @@ public class BinaryDecisionDiagram {
     private void createBDD(Node parent, Node node, int varFromOrder, String boolFunction) {
         if (Utility.contains(boolFunction, '1')) {
             if (parent == null) {
-                this.root = oneNode;
+                this.root = NODE_ONE;
                 return;
             }
             if (parent.getZeroChild() == node) {
-                parent.setZeroChild(oneNode);
+                parent.setZeroChild(NODE_ONE);
             } else if (parent.getOneChild() == node) {
-                parent.setOneChild(oneNode);
+                parent.setOneChild(NODE_ONE);
             }
             return;
         } else if (Utility.contains(boolFunction,'0')) {
             if (parent == null) {
-                this.root = zeroNode;
+                this.root = NODE_ZERO;
                 return;
             }
             if (parent.getZeroChild() == node) {
-                parent.setZeroChild(zeroNode);
+                parent.setZeroChild(NODE_ZERO);
             } else if (parent.getOneChild() == node) {
-                parent.setOneChild(zeroNode);
+                parent.setOneChild(NODE_ZERO);
             }
             return;
         }
@@ -139,19 +151,19 @@ public class BinaryDecisionDiagram {
             // False branch
             if (evaluate(boolFunction, false)) {
                 // decision = 1
-                node.setZeroChild(oneNode);
+                node.setZeroChild(NODE_ONE);
             } else {
                 // decision = 0
-                node.setZeroChild(zeroNode);
+                node.setZeroChild(NODE_ZERO);
             }
 
             // True branch
             if (evaluate(boolFunction, true)) {
                 // decision = 1
-                node.setOneChild(oneNode);
+                node.setOneChild(NODE_ONE);
             } else {
                 // decision = 0
-                node.setOneChild(zeroNode);
+                node.setOneChild(NODE_ZERO);
             }
 
             map.put(node.hash(), node);
@@ -187,7 +199,7 @@ public class BinaryDecisionDiagram {
         // A -> 1
 
         ArrayList<String> newBFunction = new ArrayList<>();
-        String[] function = boolFunction.split("\\+");
+        String[] function = Utility.removeDuplicates(boolFunction.split("\\+"));
 
         for (String s : function) {
             s = Utility.removeDuplicates(s);
@@ -326,7 +338,7 @@ public class BinaryDecisionDiagram {
         return false;
     }
 
-    private String rewriteNegations(String boolFunction) {
+    public static String rewriteNegations(String boolFunction) {
         for (int i = 0; i < upperCaseAlphabet.length(); i++) {
             boolFunction = boolFunction.replaceAll("!" + upperCaseAlphabet.charAt(i), "" + lowerCaseAlphabet.charAt(i));
         }
@@ -362,8 +374,9 @@ public class BinaryDecisionDiagram {
         return this.reductionRatio = 100*(1-numberOfNodes / getAllNodes());
     }
 
+    // Nodes 0 and 1 are not counted in since they are constants
     private int countNodes() {
-        return (numberOfNodes = map.getSize() + 2);
+        return (numberOfNodes = map.getSize());
     }
 
     // Prints the tree

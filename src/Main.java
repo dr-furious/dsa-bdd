@@ -1,39 +1,40 @@
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws BDDNotInitializedException {
+        Tester tester = new Tester();
 
-        //BinaryDecisionDiagram bdd = new BinaryDecisionDiagram();
-        //bdd.createBDD("ABC+!AB+AB!C+CD+A+A!D", "ABCD");
-        //bdd.print();
+        // !A!G!KL!N+!A!GK!L!N+!A!GK!LN+!A!GKL!N+!A!GKLN+!AG!KL!N+!AGK!L!N+!AGKL!N+!AGKLN+A!G!K!L!N+A!G!KL!N+A!GK!L!N+A!GKL!N+A!GKLN+AG!K!LN+AGK!LN+AGKLN
+        // AGKLN
+        // 11001 | 1
+        // 11010 | 0
 
-        String[] s = {"A","A!D", "ABC","A", "!AB","A!D", "AB!C", "ABC","CD", "A", "A!D"};
-        String[] s2 = {"A","A!D", "ABC","A", "AB!C", "ABC","CD", "A", "A!D"};
-        Node node = new Node('A', s);
-        Node node2 = new Node('B', s2);
-        BinaryDecisionDiagram bdd = new BinaryDecisionDiagram();
-        // System.out.println(Arrays.toString(Utility.removeDuplicates(s)));
+        BinaryDecisionDiagram testBDD = new BinaryDecisionDiagram();
+        //testBDD.createBDD("!A!G!KL!N+!A!GK!L!N+!A!GK!LN+!A!GKL!N+!A!GKLN+!AG!KL!N+!AGK!L!N+!AGKL!N+!AGKLN+A!G!K!L!N+A!G!KL!N+A!GK!L!N+A!GKL!N+A!GKLN+AG!K!LN+AGK!LN+AGKLN", "AGKLN");
+        //testBDD.printNicely(false);
+        //System.out.println(testBDD.useBDD("11001"));
+        //System.out.println(Tester.solve("!A!G!KL!N+!A!GK!L!N+!A!GK!LN+!A!GKL!N+!A!GKLN+!AG!KL!N+!AGK!L!N+!AGKL!N+!AGKLN+A!G!K!L!N+A!G!KL!N+A!GK!L!N+A!GKL!N+A!GKLN+AG!K!LN+AGK!LN+AGKLN", "11001"));
+        //tester.test(s11, "EBCDA","00001",true);
+        //System.out.println("Solve function: " + tester.solve("00001"));
 
-        MultiMap<Integer, Node> map = new MultiMap<>();
-        System.out.println(map.put(1, node));
-        System.out.println(map.put(1, node2));
-        System.out.println(map.put(3, node2));
-        System.out.println(map.put(3, node2));
-        System.out.println(map.put(234, node2));
-        System.out.println(map.put(234, node));
+        //1000 | 0
+        //1001 | 1
+        //1110 | 1
+        //1111 | 0
 
-        System.out.println(map);
+        /*testBDD.createBDD("!E!G!O!V+!E!GOV+!EG!O!V+!EG!OV+!EGOV+E!G!OV+E!GOV+EG!O!V+EG!OV+EGO!V", "EGOV");
+        testBDD.printNicely(false);
+        System.out.println(testBDD.useBDD("1000"));
+        System.out.println(Tester.solve("!E!G!O!V+!E!GOV+!EG!O!V+!EG!OV+!EGOV+E!G!OV+E!GOV+EG!O!V+EG!OV+EGO!V", "1000"));
 
-        System.out.println(map.delete(1, node));
-        System.out.println(map.delete(1, node));
-        System.out.println(map.delete(234, node));
 
-        System.out.println(map);
+        String[] arr1 = {"gov","gOV","Gov","GoV", "GOV"};
+        String[] arr2 = {"goV", "gOV", "Gov","GoV","GOv"};
 
-        String s1 = "A!D + A!BC + A + !AB + A!D + !A!B!C + ABC + CD + A + A!D";
-        //System.out.println(bdd.rewriteNegations(s1));
+        System.out.println(Utility.hash(arr1));
+        System.out.println(Utility.hash2(arr1));
+        System.out.println();
+        System.out.println(Utility.hash(arr2));
+        System.out.println(Utility.hash2(arr2));*/
+
+        tester.testBDD(13, false,100);
     }
 }
