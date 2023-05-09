@@ -240,9 +240,12 @@ public class Tester {
                 "-----------------------------------------\n"
         );
         System.out.println("END");
+        if (((bestOrderBDDUseSuccessRatio/iterations)*100) < 100) {
+            System.exit(10);
+        }
     }
 
-    private double testBDDUse(BinaryDecisionDiagram bdd) throws BDDNotInitializedException {
+    public double testBDDUse(BinaryDecisionDiagram bdd) throws BDDNotInitializedException {
         if (bdd.getRoot() == null) {
             throw new IllegalArgumentException("BDD has yet not been initialized. Suggestion: call createBDD first.");
         }

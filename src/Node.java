@@ -144,6 +144,10 @@ public class Node {
         return node.hashSpecial() == this.hashSpecial();
      }
 
+     public boolean equals(Node node) {
+        return Arrays.toString(node.getBoolFunction()).equals(Arrays.toString(this.getBoolFunction()));
+     }
+
     public int computeHeight() {
         return computeHeight(this);
     }

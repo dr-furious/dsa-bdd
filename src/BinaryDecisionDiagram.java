@@ -75,7 +75,7 @@ public class BinaryDecisionDiagram {
         currentBDD.createBDD(boolFunction, order);
         bestOrderBDD = currentBDD;
 
-        for (long i = 0; i < Math.pow(order.length()-1,1)+1; i++) {
+        for (long i = 0; i < Math.pow(order.length()-1,2)+1; i++) {
             order = Utility.shuffle(order);
             currentBDD = new BinaryDecisionDiagram();
             currentBDD.createBDD(boolFunction, order);
@@ -173,15 +173,12 @@ public class BinaryDecisionDiagram {
         Node oneBranch = new Node(order.charAt(varFromOrder+1),trueFunction.split("\\+"));
 
         // ============== I REDUCTION ==============
-
         if (zeroBranch.equals(oneBranch)) {
             node.setValue(order.charAt(varFromOrder+1));
             node.setBoolFunction(falseFunction.split("\\+"));
             createBDD(parent, node, varFromOrder+1, falseFunction);
             return;
         }
-
-
         map.put(node.hashSpecial(), node);
 
         node.setZeroChild(zeroBranch);
@@ -277,7 +274,7 @@ public class BinaryDecisionDiagram {
         if (check == '0') {
             return false;
         }
-        char lowerCheck = (substituteForVar) ? Character.toLowerCase(check) : Character.toUpperCase(check);
+        char charCheck = (substituteForVar) ? Character.toLowerCase(check) : Character.toUpperCase(check);
 
         String[] function = boolFunction.split("\\+");
         int result = 0;
@@ -288,7 +285,7 @@ public class BinaryDecisionDiagram {
                 if (s.charAt(j) == '1') {
                     return true;
                 }
-                if (s.charAt(j) == lowerCheck) {
+                if (s.charAt(j) == charCheck) {
                     midResult = 0;
                     break;
                 }

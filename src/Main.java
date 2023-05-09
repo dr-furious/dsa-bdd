@@ -1,3 +1,6 @@
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 
 public class Main {
@@ -6,8 +9,25 @@ public class Main {
 
 
         BinaryDecisionDiagram testBDD = new BinaryDecisionDiagram();
-        //tester.testBDD("ABCD+!ABCD", "ABCD", "0000", true);
+        //tester.testBDD("ABCE!D+H!JGIF+LNK!M+P!OQR", "EJDFHPIBAQNOKRCLMG", "000000000000000000", false);
 
-        tester.testBDD(13, false,100);
+
+        for (int i = 0; i < 1; i++) {
+            tester.testBDD(13, false,100);
+            System.out.println("========================================= " + (i+1) + ". done");
+        }
+
+
+        /*String s = "";
+        try {
+             s = Files.readString(Paths.get("./src/input.txt"));
+            System.out.println(s);
+        } catch (IOException e) {
+            System.out.println("Error reading file: " + e.getMessage());
+        }
+
+
+        // tester.testBDD(s,"DGHJNOPQSTUWZ", "0100000000000", false);
+        testBDD.createBDD(s,"DGHJNOPQSTUWZ");*/
     }
 }
