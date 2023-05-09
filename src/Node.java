@@ -141,10 +141,13 @@ public class Node {
             return false;
         }
         Node node = (Node) obj;
-        return node.hashSpecial() == this.hashSpecial();
+        return node.hashSpecial() == this.hashSpecial() && isEqual(node);
      }
 
-     public boolean equals(Node node) {
+     public boolean isEqual(Node node) {
+        if (node == null) {
+            return false;
+        }
         return Arrays.toString(node.getBoolFunction()).equals(Arrays.toString(this.getBoolFunction()));
      }
 

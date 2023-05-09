@@ -12,13 +12,13 @@ public class BinaryDecisionDiagram {
     private String order;
     private double reductionRatio;
 
-    private HashMap<Long, Node> map;
+    private MultiMap<Long, Node> map;
 
     private final Node NODE_ZERO;
     private final Node NODE_ONE;
 
     public BinaryDecisionDiagram() {
-        map = new HashMap<>();
+        map = new MultiMap<>();
         NODE_ZERO = new Node('0');
         NODE_ONE = new Node('1');
         numberOfNodes = 0;
@@ -127,7 +127,7 @@ public class BinaryDecisionDiagram {
         }
 
         // ============== S REDUCTION ==============
-        Node exisitingNode = map.get(node.hashSpecial());
+        Node exisitingNode = map.find(node.hashSpecial(), node);
         if ((node.equals(exisitingNode))) {
             if (parent.getZeroChild() == node) {
                 parent.setZeroChild(exisitingNode);

@@ -1,7 +1,18 @@
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class Tester {
     private static final String upperCaseAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private static final String TESTS_FILE_PATH = "./tests/test_";
+    private static final String TEST_INFO_PATH = "/info";
+    private static final String TEST_RESULTS_PATH = "/results";
+    private static final String TEST_BDD_VS_BO_BDD_PATH = "/bdd_vs_bo_bdd";
 
     private TruthTable truthTable;
     private String boolFunction; // DNF representation of a boolean function
@@ -154,7 +165,7 @@ public class Tester {
         System.out.println("Best order BDD_use: " + bestOrderBDD.useBDD(inputs));
     }
 
-    public void testBDD(int numberOfVariables, boolean print, int iterations) throws BDDNotInitializedException {
+    public void testBDD(int numberOfVariables, boolean print, int iterations, int testID) throws BDDNotInitializedException {
         if (iterations < 1) {
             return;
         }
@@ -211,35 +222,68 @@ public class Tester {
             System.out.println("Iteration " + (i+1) + ". done.");
         }
 
-        System.out.println("" +
+        double bddReductionRatio = ((Math.pow(2, (numberOfVariables + 1)) - 1) - bddNumberOfNodesAfterReduction / iterations) / (Math.pow(2, (numberOfVariables + 1)) - 1);
+        double bestOrderBDDReductionRatio = ((Math.pow(2, (numberOfVariables + 1)) - 1) - bestOrderBDDNumberOfNodesAfterReduction / iterations) / (Math.pow(2, (numberOfVariables + 1)) - 1);
+        String data = "" +
                 "BINARY DECISION DIAGRAMS TESTING\n" +
                 "-----------------------------------------\n" +
-                "> Tested Boolean Function:\n> " + boolFunction + "\n" +
                 "> Number of Variables:\n> " + numberOfVariables + "\n" +
                 "> Iterations:\n> " + iterations + "\n" +
                 "-----------------------------------------\n\n" +
                 "RESULTS:\n" +
                 "-----------------------------------------\n" +
                 "> Binary Decision Diagram\n" +
-                "> Order: " + Utility.extractUniqueLetters(this.boolFunction) + "\n" +
                 "> Average Number of Nodes Before Reduction: " + ( (int) Math.pow(2,(numberOfVariables+1))-1 ) + "\n" +
                 "> Average Number of Nodes After Reduction: " + (bddNumberOfNodesAfterReduction/iterations) + "\n" +
-                "> Average Reduction Ratio: " + (((Math.pow(2,(numberOfVariables+1))-1)-bddNumberOfNodesAfterReduction/iterations)/(Math.pow(2,(numberOfVariables+1))-1)*100) +"%\n" +
+                "> Average Reduction Ratio: " + (bddReductionRatio *100) +"%\n" +
                 "> Average Reduction Duration: " + formatTime(createTime/iterations) + "\n" +
                 "> Average Testing Duration: " + formatTime(useTime/iterations) + "\n" +
                 "> Average Test Success Ratio: " + ((bddUseSuccessRatio/iterations)*100) + "%\n" +
                 "\n" +
                 "> Best Order Binary Decision Diagram\n" +
-                "> Order: " + bestOrder + "\n" +
                 "> Average Number of Nodes Before Reduction: " + ( (int) Math.pow(2,(numberOfVariables+1))-1 ) + "\n" +
                 "> Average Number of Nodes After Reduction: " + (bestOrderBDDNumberOfNodesAfterReduction/iterations) + "\n" +
-                "> Average Reduction Ratio: " + (((Math.pow(2,(numberOfVariables+1))-1)-bestOrderBDDNumberOfNodesAfterReduction/iterations)/(Math.pow(2,(numberOfVariables+1))-1)*100) +"%\n" +
+                "> Average Reduction Ratio: " + (bestOrderBDDReductionRatio *100) +"%\n" +
                 "> Average Reduction Duration: " + formatTime(bestOrderCreateTime/iterations) + "\n" +
                 "> Average Testing Duration: " + formatTime(useBestOrderTime/iterations) + "\n" +
                 "> Average Test Success Ratio: " + ((bestOrderBDDUseSuccessRatio/iterations)*100) + "%\n" +
-                "-----------------------------------------\n"
-        );
-        System.out.println("END");
+                "-----------------------------------------\n\n" +
+                "> Average Reduction Ratio When Comparing BDD With Best-ordered BDD: " +
+                (100-(bestOrderBDDReductionRatio *100)/(bddReductionRatio *100)) +
+                "%\n-----------------------------------------\nEND\n";
+        System.out.println(data);
+
+        Path path = createFolders(TESTS_FILE_PATH + testID);
+        String infoData = "" +
+                "Number_of_Variables;"+ numberOfVariables +"\n" +
+                "Number_of_Iterations;" + iterations;
+        toFile(infoData, path, TEST_INFO_PATH);
+
+        String resultsData = "" +
+                "BDD_Type;Nodes_Before_Reduction;Nodes_After_Reduction;Reduction_Ratio;Reduction_Duration;Testing_Duration;Test_Success_Ratio\n" +
+                "" +
+                "Alphabetical_Ordered_BDD;" +
+                ( (int) Math.pow(2,(numberOfVariables+1))-1 ) + ";" +
+                (bddNumberOfNodesAfterReduction/iterations) + ";" +
+                (bddReductionRatio *100) + ";" +
+                (createTime/iterations) + ";" +
+                (useTime/iterations) + ";" +
+                ((bddUseSuccessRatio/iterations)*100) + "\n" +
+                "" +
+                "Best_Ordered_BDD;"+
+                ( (int) Math.pow(2,(numberOfVariables+1))-1 ) + ";" +
+                (bestOrderBDDNumberOfNodesAfterReduction/iterations) + ";" +
+                (bestOrderBDDReductionRatio *100) + ";" +
+                (bestOrderCreateTime/iterations) + ";" +
+                (useBestOrderTime/iterations) + ";" +
+                ((bestOrderBDDUseSuccessRatio/iterations)*100) + "\n";
+        toFile(resultsData, path,TEST_RESULTS_PATH);
+
+        String bddVSBOBDD = "" +
+                "BDD_vs_BO_BDD\n" +
+                (100-(bestOrderBDDReductionRatio *100)/(bddReductionRatio * 100));
+        toFile(bddVSBOBDD, path, TEST_BDD_VS_BO_BDD_PATH);
+
         if (((bestOrderBDDUseSuccessRatio/iterations)*100) < 100) {
             System.exit(10);
         }
@@ -272,5 +316,45 @@ public class Tester {
         return nanoseconds + " nanoseconds = " +
                 (nanoseconds/1_000_000.0) + " milliseconds = " +
                 (nanoseconds/1_000_000_000.0) + " seconds";
+    }
+
+    private void toFile(String data, Path path, String fileName) {
+        String filePath = path.toString() + fileName + ".csv";
+
+        File file = new File(filePath);
+        FileWriter fw = null;
+        BufferedWriter bw = null;
+
+        try {
+            fw = new FileWriter(file);
+            bw = new BufferedWriter(fw);
+            bw.write(data);
+            System.out.println("Data written to the file " + filePath + ".");
+        } catch (IOException e) {
+            System.out.println("An error occurred while writing to the file " + filePath);
+            e.printStackTrace();
+        } finally {
+            try {
+                assert bw != null;
+                bw.close();
+                fw.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private Path createFolders(String path) {
+        Path filePath = Paths.get(path);
+        if (!Files.exists(filePath)) {
+            try {
+                Files.createDirectories(filePath);
+                System.out.println("Directory created: " + filePath);
+            } catch (IOException e) {
+                System.err.println("Failed to create directory: " + e.getMessage());
+            }
+        }
+
+        return filePath;
     }
 }

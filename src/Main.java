@@ -12,9 +12,9 @@ public class Main {
         //tester.testBDD("ABCE!D+H!JGIF+LNK!M+P!OQR", "EJDFHPIBAQNOKRCLMG", "000000000000000000", false);
 
 
-        for (int i = 0; i < 1; i++) {
-            tester.testBDD(13, false,100);
-            System.out.println("========================================= " + (i+1) + ". done");
+        for (int i = 1; i <= 2; i++) {
+            tester.testBDD(13, false,5, i);
+            System.out.println("========================================= " + i + ". done");
         }
 
 
