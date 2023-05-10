@@ -32,6 +32,9 @@ public class Utility {
     }
 
     public static String extractUniqueLetters(String s) {
+        if (s==null) {
+            return null;
+        }
         s = s.toUpperCase();
         StringBuilder sb = new StringBuilder();
         ArrayList<Character> list = new ArrayList<>();

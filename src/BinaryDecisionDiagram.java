@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class BinaryDecisionDiagram {
     private static final String upperCaseAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -45,6 +42,9 @@ public class BinaryDecisionDiagram {
             throw new BDDNotInitializedException("BDD was not initialized.");
         }
         String alphabet = Utility.extractUniqueLetters(order);
+        if (alphabet == null) {
+            return '0';
+        }
         if (alphabet.length() != inputs.length()) {
             throw new IllegalArgumentException("Argument \"inputs\" should be the same length as number " +
                     "of unique variables in the argument \"boolFunction\".");
@@ -89,6 +89,10 @@ public class BinaryDecisionDiagram {
     }
 
     public Node createBDD(String boolFunction, String order) {
+        if (boolFunction.isEmpty()) {
+            root = NODE_ZERO;
+            return root;
+        }
         boolFunction = rewriteNegations(boolFunction);
         boolFunction = Utility.sortBinaryFunction(boolFunction);
         root = new Node(order.charAt(0),boolFunction.split("\\+"));
@@ -102,7 +106,8 @@ public class BinaryDecisionDiagram {
     }
 
     private void createBDD(Node parent, Node node, int varFromOrder, String boolFunction) {
-        if (Utility.contains(boolFunction, '1')) {
+        ArrayList<String> check = new ArrayList<>(Arrays.asList(boolFunction.split("\\+")));
+        if (Utility.contains(boolFunction, '1') || (check.contains(Character.toString(order.charAt(varFromOrder)))) && check.contains(Character.toString(order.charAt(varFromOrder)).toLowerCase())) {
             if (parent == null) {
                 this.root = NODE_ONE;
                 return;

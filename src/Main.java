@@ -6,28 +6,15 @@ import java.util.Arrays;
 public class Main {
     public static void main(String[] args) throws BDDNotInitializedException {
         Tester tester = new Tester();
+        //tester.testBDD("A!B!C!D+C!A+A!C!B+B!D+A!C+B!A!C!D+C!D!A!B+!ACB!D+A", "CBAD", "1000", true);
 
 
-        BinaryDecisionDiagram testBDD = new BinaryDecisionDiagram();
-        //tester.testBDD("ABCE!D+H!JGIF+LNK!M+P!OQR", "EJDFHPIBAQNOKRCLMG", "000000000000000000", false);
-
-
-        for (int i = 1; i <= 2; i++) {
-            tester.testBDD(13, false,5, i);
-            System.out.println("========================================= " + i + ". done");
+        int id = 16;
+        for (int i = 16; i <= 30; i++) {
+            tester.testBDD(id, false,100, id*100+1);
+            System.out.println("========================================= " + (id*100+1) + ". done");
+            id++;
         }
 
-
-        /*String s = "";
-        try {
-             s = Files.readString(Paths.get("./src/input.txt"));
-            System.out.println(s);
-        } catch (IOException e) {
-            System.out.println("Error reading file: " + e.getMessage());
-        }
-
-
-        // tester.testBDD(s,"DGHJNOPQSTUWZ", "0100000000000", false);
-        testBDD.createBDD(s,"DGHJNOPQSTUWZ");*/
     }
 }

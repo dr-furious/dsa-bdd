@@ -17,9 +17,6 @@ public class Tester {
     private TruthTable truthTable;
     private String boolFunction; // DNF representation of a boolean function
 
-
-    public Tester() {}
-
     public static char solve(String boolFunction,String inputs) {
         String alphabet = Utility.extractUniqueLetters(boolFunction);
         boolFunction = BinaryDecisionDiagram.rewriteNegations(boolFunction);
@@ -78,14 +75,6 @@ public class Tester {
 
         truthTable = new TruthTable(alphabetLength);
         StringBuilder boolFunction = new StringBuilder();
-
-        /*
-        System.out.println(alphabet);
-        for (int i = 0; i <alphabetLength; i++) {
-            System.out.println(Arrays.toString(truthTable.getVariableValues().get(i)));
-        }
-        System.out.println("=====================\n"+Arrays.toString(truthTable.getResults()));
-         */
 
         ArrayList<char[]> variableValues = truthTable.getVariableValues();
         char[] results = truthTable.getResults();
@@ -304,9 +293,6 @@ public class Tester {
             char result = results[i];
             if (bdd.useBDD(inputs) == result) {
                 successfulTest++;
-            } else {
-                System.out.println(Arrays.toString(bdd.getRoot().getBoolFunction()) + " | " + bdd.getOrder() + " | " + inputs + " | " + result);
-
             }
         }
 
