@@ -1,3 +1,7 @@
+package com.project.tester;
+
+import com.project.Utility;
+
 import java.util.ArrayList;
 
 public class TruthTable {

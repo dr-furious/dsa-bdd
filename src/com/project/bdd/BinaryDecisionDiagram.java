@@ -1,3 +1,8 @@
+package com.project.bdd;
+
+import com.project.MultiMap;
+import com.project.Utility;
+
 import java.util.*;
 
 public class BinaryDecisionDiagram {

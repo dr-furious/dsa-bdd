@@ -1,13 +1,14 @@
 rm(list = ls())
 library(tidyverse)
 
+report_ids <- 1:17
 get_data_from_file <- function (path, delimiter = ";") {
   my_data <- read_delim(path, delim = delimiter)
 }
 
 # specify the file names and paths
 file_names <- character()
-for (i in 1:23) {
+for (i in report_ids) {
   file_names <- c(file_names, paste0("test_", i, "01/results.csv"))
 }
 file_paths <- file.path("./", file_names)
@@ -22,9 +23,10 @@ number_of_nodes_data <-
   tibble(
     Number_of_Variables = numeric(),
     Alphabetically_Ordered_BDD = numeric(), 
-    Best_Ordered_BDD = numeric())
+    Best_Ordered_BDD = numeric()
+    )
 
-for(i in 1:23) {
+for(i in report_ids) {
   curr_sample = my_data_list[[i]]
   number_of_nodes_data <- number_of_nodes_data %>% add_row(
     Number_of_Variables = i,

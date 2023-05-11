@@ -1,3 +1,5 @@
+package com.project.tester;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -7,9 +9,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
+import com.project.bdd.BDDNotInitializedException;
+import com.project.bdd.BinaryDecisionDiagram;
+import com.project.Utility;
+
 public class Tester {
     private static final String upperCaseAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    private static final String TESTS_FILE_PATH = "./tests/test_";
+    private static final String TESTS_FILE_PATH = "./../tests/test_";
     private static final String TEST_INFO_PATH = "/info";
     private static final String TEST_RESULTS_PATH = "/results";
     private static final String TEST_BDD_VS_BO_BDD_PATH = "/bdd_vs_bo_bdd";
