@@ -1,3 +1,0 @@
-BDD_Type;Nodes_Before_Reduction;Nodes_After_Reduction;Reduction_Ratio;Reduction_Duration;Testing_Duration;Test_Success_Ratio
-Alphabetical_Ordered_BDD;8191;732.03;91.06299597118789;2.077823382E7;1799601.62;100.0
-Best_Ordered_BDD;8191;719.12;91.22060798437309;2.55987589916E9;2232447.16;100.0
